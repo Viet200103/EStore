@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EStore.Business", "EStore.Business\EStore.Business.csproj", "{33D9E0F4-7B80-4CE9-9F67-97AA53BE4ABE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EStore.Data", "EStore.Data\EStore.Data.csproj", "{3D4ACBE9-6F54-4EA3-9856-374C4C1921C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EStore.Application", "EStore.Application\EStore.Application.csproj", "{2D1FD078-64F9-49F8-A810-EF5DC1736A5A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{33D9E0F4-7B80-4CE9-9F67-97AA53BE4ABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33D9E0F4-7B80-4CE9-9F67-97AA53BE4ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33D9E0F4-7B80-4CE9-9F67-97AA53BE4ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33D9E0F4-7B80-4CE9-9F67-97AA53BE4ABE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D4ACBE9-6F54-4EA3-9856-374C4C1921C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D4ACBE9-6F54-4EA3-9856-374C4C1921C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D4ACBE9-6F54-4EA3-9856-374C4C1921C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D4ACBE9-6F54-4EA3-9856-374C4C1921C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D1FD078-64F9-49F8-A810-EF5DC1736A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D1FD078-64F9-49F8-A810-EF5DC1736A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D1FD078-64F9-49F8-A810-EF5DC1736A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D1FD078-64F9-49F8-A810-EF5DC1736A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
