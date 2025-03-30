@@ -1,4 +1,4 @@
-﻿using EStore.Data.Data.Models;
+﻿using EStore.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EStore.Data.Database;
@@ -14,15 +14,15 @@ public class EStoreContext : DbContext
     {
     }
 
-    public virtual DbSet<Member> Members { get; set; }
+    public DbSet<Member> Members { get; set; }
 
-    public virtual DbSet<Order> Orders { get; set; }
+    public DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<OrderDetail> OrderDetails { get; set; }
+    public DbSet<OrderDetail> OrderDetails { get; set; }
 
-    public virtual DbSet<Category> Categories { get; set; }
+    public DbSet<Category> Categories { get; set; }
     
-    public virtual DbSet<Product> Products { get; set; }
+    public DbSet<Product> Products { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

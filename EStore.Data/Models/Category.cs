@@ -1,4 +1,4 @@
-﻿namespace EStore.Data.Data.Models;
+﻿namespace EStore.Data.Models;
 
 public class Category
 {
