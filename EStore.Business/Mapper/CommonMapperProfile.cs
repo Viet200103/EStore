@@ -2,7 +2,7 @@
 using EStore.Business.DTOs;
 using EStore.Data.Models;
 
-namespace MentorLink.Business.Mapper;
+namespace EStore.Business.Mapper;
 
 public class CommonMapperProfile : Profile
 {

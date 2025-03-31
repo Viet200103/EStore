@@ -21,7 +21,7 @@ public class EStoreDbContext : DbContext
     public DbSet<OrderDetail> OrderDetails { get; set; }
 
     public DbSet<Category> Categories { get; set; }
-    
+
     public DbSet<Product> Products { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,15 +35,15 @@ public class EStoreDbContext : DbContext
             entity.Property(e => e.City)
                 .HasMaxLength(15)
                 .IsUnicode(false);
-            
+
             entity.Property(e => e.CompanyName)
                 .HasMaxLength(40)
                 .IsUnicode(false);
-            
+
             entity.Property(e => e.Country)
                 .HasMaxLength(15)
                 .IsUnicode(false);
-            
+
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -84,7 +84,7 @@ public class EStoreDbContext : DbContext
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.CategoryId).HasName("PK__Category__19093A0BBA4D5CFC");
-            
+
             entity.ToTable("Category");
 
             entity.Property(e => e.CategoryName)
@@ -104,9 +104,9 @@ public class EStoreDbContext : DbContext
             entity.Property(e => e.ProductName)
                 .HasMaxLength(40)
                 .IsUnicode(false);
-            
+
             entity.Property(e => e.UnitPrice).HasColumnType("money");
-            
+
             entity.Property(e => e.Weight)
                 .HasMaxLength(20)
                 .IsUnicode(false);

@@ -14,6 +14,10 @@
 <div>
     <h2>Member</h2>
     <hr />
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
     @if (member is null)
     {
         <p><em>Loading...</em></p>

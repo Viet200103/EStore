@@ -1,10 +1,10 @@
 ﻿using EStore.Application.Components;
 using EStore.Application.Config;
+using EStore.Business.Mapper;
 using EStore.Business.Repositories;
 using EStore.Business.Service;
 using EStore.Business.Service.IService;
 using EStore.Data.Repositories;
-using MentorLink.Business.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
