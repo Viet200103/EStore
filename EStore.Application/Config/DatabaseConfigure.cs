@@ -1,23 +1,24 @@
 ﻿using EStore.Data.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace EStore.Application.Config
+namespace EStore.Application.Config;
+
+public static class DatabaseConfigure
 {
-    public static class DatabaseConfigure
+
+    public static void Configure(IConfiguration configuration, WebApplicationBuilder builder)
     {
-        public static void Configure(IConfiguration configuration, WebApplicationBuilder builder)
+        string? connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        if (connectionString == null)
         {
-            string? connectionString = configuration.GetConnectionString("DefaultConnection");
-
-            if (connectionString == null)
-            {
-                throw new InvalidOperationException("MentorLinkDb connection string not found");
-            }
-
-            builder.Services.AddDbContext<EStoreContext>(options =>
-            {
-                options.UseSqlServer(connectionString);
-            });
+            throw new InvalidOperationException("EStore connection string not found");
         }
+        
+        builder.Services.AddDbContext<EStoreDbContext>(options =>
+        {
+            options.UseSqlServer(connectionString);
+        });
     }
+}
 }

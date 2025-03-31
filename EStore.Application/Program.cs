@@ -1,9 +1,11 @@
-using EStore.Application.Components;
+﻿using EStore.Application.Components;
 using EStore.Application.Config;
 using EStore.Business.Mapper;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+DatabaseConfigure.Configure(builder.Configuration, builder);
 
 builder.Services
     .AddRazorComponents()
@@ -14,6 +16,8 @@ DependencyConfigure.ConfigForServices(builder.Services);
 DependencyConfigure.ConfigForRepositories(builder.Services);
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 var app = builder.Build();
 
