@@ -10,4 +10,8 @@
       <ProjectReference Include="..\EStore.Business\EStore.Business.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Components\Pages\Member\" />
+    </ItemGroup>
+
 </Project>
