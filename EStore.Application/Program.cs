@@ -17,6 +17,11 @@ builder.Services.AddQuickGridEntityFrameworkAdapter();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
+using EStore.Application.Config;
+
+var builder = WebApplication.CreateBuilder(args);
+
+DatabaseConfigure.Configure(builder.Configuration, builder);
 
 builder.Services
     .AddRazorComponents()
@@ -27,6 +32,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));
+builder.Services.AddQuickGridEntityFrameworkAdapter();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

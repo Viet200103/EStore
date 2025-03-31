@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EStore.Data.Database;
 
-public class EStoreContext : DbContext
+public class EStoreDbContext : DbContext
 {
-    public EStoreContext()
+    public EStoreDbContext()
     {
     }
 
-    public EStoreContext(DbContextOptions<EStoreContext> options)
+    public EStoreDbContext(DbContextOptions<EStoreDbContext> options)
         : base(options)
     {
     }
