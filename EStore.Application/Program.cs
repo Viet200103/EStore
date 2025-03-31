@@ -1,4 +1,4 @@
-using EStore.Application.Components;
+﻿using EStore.Application.Components;
 using EStore.Application.Config;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,12 +9,15 @@ builder.Services
     .AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddQuickGridEntityFrameworkAdapter();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
+    app.UseMigrationsEndPoint();
 }
 
 app.UseHttpsRedirection();
