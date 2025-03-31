@@ -14,9 +14,9 @@ namespace EStore.Business.Repository
 {
     public class CategoryRepository : ICategoryRepository
     {
-        private readonly EStoreContext _dbContext;
+        private readonly EStoreDbContext _dbContext;
         private readonly ILogger<CategoryRepository> _logger;
-        public CategoryRepository(EStoreContext dbContext, ILogger<CategoryRepository> logger)
+        public CategoryRepository(EStoreDbContext dbContext, ILogger<CategoryRepository> logger)
         {
             _dbContext = dbContext;
             _logger = logger;

@@ -13,9 +13,9 @@ namespace EStore.Business.Repository
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly EStoreContext _dbContext;
+        private readonly EStoreDbContext _dbContext;
         private ILogger<ProductRepository> _logger;
-        public ProductRepository(EStoreContext dbContext, ILogger<ProductRepository> logger)
+        public ProductRepository(EStoreDbContext dbContext, ILogger<ProductRepository> logger)
         {
             _dbContext = dbContext;
             _logger = logger;
