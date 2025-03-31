@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EStore.Business.DTOs;
 
 namespace EStore.Business.Service.IService
 {
-    public class IMemberService
+    public interface IMemberService
     {
+        Task<IList<MemberDTO>> GetMembersAsync();
+        Task<MemberDTO> GetMemberByIdAsync(int id);
+        Task<bool> UpdateMemberAsync(MemberDTO member);
+        Task<bool> CreateMemberAsync(CreateMemberDTO member);
+        Task<bool> DeleteMemberAsync(int id);
     }
 }

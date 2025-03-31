@@ -1,6 +1,10 @@
 ﻿using EStore.Application.Components;
 using EStore.Application.Config;
-using Microsoft.EntityFrameworkCore;
+using EStore.Business.Repositories;
+using EStore.Business.Service;
+using EStore.Business.Service.IService;
+using EStore.Data.Repositories;
+using MentorLink.Business.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +15,13 @@ builder.Services
     .AddInteractiveServerComponents();
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
+
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+
+builder.Services.AddScoped<IMemberService, MemberService>();
+
+builder.Services.AddAutoMapper(typeof(CommonMapperProfile));
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 
