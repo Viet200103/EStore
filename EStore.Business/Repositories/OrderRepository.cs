@@ -7,9 +7,9 @@ namespace EStore.Business.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly EStoreContext _context;
+        private readonly EStoreDbContext _context;
 
-        public OrderRepository(EStoreContext context)
+        public OrderRepository(EStoreDbContext context)
         {
             _context = context;
         }

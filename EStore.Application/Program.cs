@@ -1,7 +1,6 @@
 ﻿using EStore.Application.Components;
 using EStore.Application.Config;
 using EStore.Business.Mapper;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,18 +1,20 @@
 ﻿@page "/orders/edit"
-@using Microsoft.EntityFrameworkCore
-@using EStore.Data.Models
-@inject IDbContextFactory<EStore.Data.Database.EStoreContext> DbFactory
+@using EStore.Business.Services.IServices
+@using EStore.Business.DTOs
+@inject IOrderService OrderService
 @inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
 
 <PageTitle>Edit</PageTitle>
 
-<h1>Edit</h1>
+<h1>Edit Order</h1>
 
 <h2>Order</h2>
 <hr />
 @if (Order is null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Not Found</em></p>
 }
 else
 {
@@ -23,9 +25,9 @@ else
                 <ValidationSummary role="alert"/>
                 <input type="hidden" name="Order.OrderId" value="@Order.OrderId" />
                 <div class="mb-3">
-                    <label for="memberid" class="form-label">MemberId:</label>
-                    <InputNumber id="memberid" @bind-Value="Order.MemberId" class="form-control" />
-                    <ValidationMessage For="() => Order.MemberId" class="text-danger" />
+                    <label for="memberemail" class="form-label">MemberEmail:</label>
+                    <InputText id="memberemail" @bind-Value="Order.MemberEmail" class="form-control" disabled />
+                    <ValidationMessage For="() => Order.MemberEmail" class="text-danger" />
                 </div>
                 <div class="mb-3">
                     <label for="orderdate" class="form-label">OrderDate:</label>
@@ -58,52 +60,23 @@ else
 </div>
 
 @code {
+    [Parameter]
     [SupplyParameterFromQuery]
-    private int OrderId { get; set; }
+    public int OrderId { get; set; }
 
-    [SupplyParameterFromForm]
-    private Order? Order { get; set; }
+    private OrderDTO? Order { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Order ??= await context.Orders.FirstOrDefaultAsync(m => m.OrderId == OrderId);
-
-        if (Order is null)
-        {
-            NavigationManager.NavigateTo("notfound");
-        }
+        Order = await OrderService.GetOrderByIdAsync(OrderId);
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateOrder()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Order!).State = EntityState.Modified;
-
-        try
+        if (Order is not null)
         {
-            await context.SaveChangesAsync();
+            await OrderService.UpdateOrderAsync(Order);
+            NavigationManager.NavigateTo("/orders");
         }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!OrderExists(Order!.OrderId))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        NavigationManager.NavigateTo("/orders");
-    }
-
-    private bool OrderExists(int orderid)
-    {
-        using var context = DbFactory.CreateDbContext();
-        return context.Orders.Any(e => e.OrderId == orderid);
     }
 }

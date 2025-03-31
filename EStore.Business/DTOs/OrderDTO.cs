@@ -6,13 +6,16 @@ namespace EStore.Business.DTOs
     {
         public int OrderId { get; set; }
 
-        [Required(ErrorMessage = "Member is required.")]
         public int MemberId { get; set; }
 
+        [Required(ErrorMessage = "Member Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string MemberEmail { get; set; }
 
+        [Required(ErrorMessage = "Order Date is required.")]
         public DateTime? OrderDate { get; set; }
 
+        [Required(ErrorMessage = "Require Date is required.")]
         public DateTime? RequireDate { get; set; }
         public DateTime? ShippedDate { get; set; }
 
