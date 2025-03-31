@@ -15,7 +15,7 @@
     <a href="members/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="members.AsQueryable()">
+<QuickGrid Class="table" Items="members.AsQueryable()" Pagination="pagination">
     <PropertyColumn Property="member => member.Email" />
     <PropertyColumn Property="member => member.CompanyName" />
     <PropertyColumn Property="member => member.City" />
@@ -27,9 +27,11 @@
         <a href="@($"members/delete?memberid={member.MemberId}")">Delete</a>
     </TemplateColumn>
 </QuickGrid>
+<Paginator State="pagination"/>
 
 @code {
     IList<MemberDTO> members = new List<MemberDTO>();
+    PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
 
     protected override async Task OnInitializedAsync()
     {
