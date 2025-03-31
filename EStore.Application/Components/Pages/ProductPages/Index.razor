@@ -1,0 +1,97 @@
+﻿@page "/products"
+@using EStore.Business.DTOs
+@using EStore.Business.Services.IServices
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using EStore.Data.Models
+@using EStore.Data.Database
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@inject IProductService ProductService
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="products/create">Create New</a>
+</p>
+@if(ListProductDTOs == null) {
+    <p class="text-danger">Error: Unable to load products. Please try again later.</p>
+}
+else{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    Product ID
+                </th>
+                <th>
+                    Product Name
+                </th>
+                <th>
+                    Category Name
+                </th>
+                <th>
+                    Weight
+                </th>
+                <th>
+                    Price
+                </th>
+                <th>
+                    Stock
+                </th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @foreach (var product in ListProductDTOs)
+            {
+                <tr>
+                    <td>
+                        @product.ProductId
+                    </td>
+                    <td>
+                        @product.ProductName
+                    </td>
+                    <td>
+                        @product.Category.CategoryName
+                    </td>
+                    <td>
+                        @product.Weight
+                    </td>
+                    <td>
+                        @product.UnitPrice
+                    </td>
+                    <td>
+                        @product.UnitslnStock
+                    </td>
+                    <td>
+                        <a href="@($"products/edit?productid={product.ProductId}")">Edit</a>
+                    </td>
+                    <td>
+                        <a href="@($"products/delete?productid={product.ProductId}")">Delete</a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private List<ProductDTO> ListProductDTOs = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try{
+            ListProductDTOs = await ProductService.GetAllProductAsync();
+        }
+        catch (Exception ex) {
+            Console.Error.WriteLine($"Error loading products: {ex.Message}");
+			NavigationManager.NavigateTo("/error");
+        }
+    }
+}
