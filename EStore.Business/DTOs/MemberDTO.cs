@@ -18,7 +18,5 @@ namespace EStore.Business.DTOs
         public string? City { get; set; }
 
         public string? Country { get; set; }
-
-        public ICollection<OrderDTO> Orders { get; set; } = new List<OrderDTO>();
     }
 }
