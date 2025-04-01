@@ -1,9 +1,16 @@
 ﻿using EStore.Application.Components;
 using EStore.Application.Config;
+using EStore.Business.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
-DatabaseConfigure.Configure(builder.Configuration, builder);
+DatabaseConfiguration.Configure(builder.Configuration, builder);
+SecurityConfiguration.ConfigureAuthJwt(builder.Configuration, builder.Services);
+ServiceConfiguration.AddRepositoryConfiguration(builder.Services);
+ServiceConfiguration.AddServiceConfiguration(builder.Services);
+
+var jwtSection = builder.Configuration.GetSection("JwtOptions");
+builder.Services.Configure<JwtOptions>(jwtSection);
 
 builder.Services
     .AddRazorComponents()
@@ -21,6 +28,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
