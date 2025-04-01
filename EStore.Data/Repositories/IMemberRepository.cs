@@ -9,4 +9,5 @@ public interface IMemberRepository
     Task<IList<Member>> GetAllAsync();
     Task<Member> GetByIdAsync(int id);
     Task<bool> UpdateMemberAsync(Member member);
+    Task<Member?> GetMemberByEmail(string email);
 }

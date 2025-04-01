@@ -28,7 +28,7 @@ public class EStoreDbContext : DbContext
     {
         modelBuilder.Entity<Member>(entity =>
         {
-            entity.HasKey(e => e.MemberId).HasName("PK__Member__0CF04B1869A5D88F");
+            entity.HasKey(e => e.MemberId);
 
             entity.ToTable("Member");
 
@@ -47,11 +47,15 @@ public class EStoreDbContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+
+            entity.Property(e => e.Password)
+                .HasMaxLength(30)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.OrderId).HasName("PK__Order__C3905BCFB7F26B4D");
+            entity.HasKey(e => e.OrderId);
 
             entity.ToTable("Order");
 
@@ -65,7 +69,7 @@ public class EStoreDbContext : DbContext
 
         modelBuilder.Entity<OrderDetail>(entity =>
         {
-            entity.HasKey(e => e.OrderDetailId).HasName("PK__OrderDet__D3B9D36C57CC404F");
+            entity.HasKey(e => e.OrderDetailId);
 
             entity.ToTable("OrderDetail");
 
@@ -83,8 +87,8 @@ public class EStoreDbContext : DbContext
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__Category__19093A0BBA4D5CFC");
-
+            entity.HasKey(e => e.CategoryId);
+            
             entity.ToTable("Category");
 
             entity.Property(e => e.CategoryName)
@@ -97,7 +101,7 @@ public class EStoreDbContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6CD91D95288");
+            entity.HasKey(e => e.ProductId);
 
             entity.ToTable("Product");
 

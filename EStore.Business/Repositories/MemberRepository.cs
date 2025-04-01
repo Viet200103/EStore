@@ -65,5 +65,16 @@ namespace EStore.Business.Repositories
                 throw new Exception(ex.InnerException.Message);
             }
         }
+        
+        public async Task<Member?> GetMemberByEmail(string email)
+        {
+            return await _dbContext.Members
+                .Select(m => new Member
+                {
+                    Email = m.Email,
+                    Password = m.Password,
+                })
+                .SingleOrDefaultAsync(m => m.Email == email);
+        }
     }
 }
