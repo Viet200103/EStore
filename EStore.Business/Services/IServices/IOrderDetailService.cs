@@ -1,9 +1,6 @@
-﻿
+﻿using EStore.Business.DTOs.OrderDetailDTO;
 
-using EStore.Business.DTOs.OrderDetailDTO;
-using EStore.Data.Models;
-
-namespace EStore.Business.Service.IService
+namespace EStore.Business.Services.IServices
 {
     public interface IOrderDetailService
     {

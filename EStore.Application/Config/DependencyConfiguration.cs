@@ -1,7 +1,5 @@
 ﻿using EStore.Business.Repositories;
 using EStore.Business.Security;
-using EStore.Business.Service;
-using EStore.Business.Service.IService;
 using EStore.Business.Services;
 using EStore.Business.Services.IServices;
 using EStore.Data.Repositories;

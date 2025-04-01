@@ -1,6 +1,6 @@
 ﻿using EStore.Business.DTOs;
 
-namespace EStore.Business.Service.IService
+namespace EStore.Business.Services.IServices
 {
     public interface IMemberService
     {

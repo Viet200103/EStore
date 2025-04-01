@@ -1,11 +1,11 @@
 ﻿using EStore.Business.DTOs;
 using EStore.Business.Exceptions;
 using EStore.Business.Security;
-using EStore.Business.Service.IService;
+using EStore.Business.Services.IServices;
 using EStore.Data.Models;
 using EStore.Data.Repositories;
 
-namespace EStore.Business.Service;
+namespace EStore.Business.Services;
 
 public class AuthService(
     IMemberRepository memberRepository,
