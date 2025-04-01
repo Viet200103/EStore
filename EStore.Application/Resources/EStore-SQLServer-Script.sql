@@ -10,7 +10,8 @@ CREATE TABLE [Member](
     [Email] VARCHAR(100) NOT NULL,
     [CompanyName] VARCHAR(40) NOT NULL,
     [City] VARCHAR(15) NOT NULL,
-    [Country] VARCHAR(15) NOT NULL
+    [Country] VARCHAR(15) NOT NULL,
+    [Password] VARCHAR(30) NOT NULL,
 );
 GO
 
@@ -51,12 +52,12 @@ CREATE TABLE [Category](
 );
 GO
 
-INSERT INTO [Member] (Email, CompanyName, City, Country) VALUES
-('john.doe@example.com', 'Acme Corp', 'New York', 'USA'),
-('jane.smith@globex.com', 'Globex Industries', 'London', 'UK'),
-('peter.jones@datawise.net', 'DataWise Solutions', 'Paris', 'France'),
-('maria.garcia@techforward.org', 'TechForward Inc', 'Madrid', 'Spain'),
-('kenji.tanaka@innovate.jp', 'Innovate Systems', 'Tokyo', 'Japan');
+INSERT INTO [Member] (Email, CompanyName, City, Country, [Password]) VALUES
+('john.doe@example.com', 'Acme Corp', 'New York', 'USA', 'P@ssw0rd123'),
+('jane.smith@globex.com', 'Globex Industries', 'London', 'UK', 'SecurePass!45'),
+('peter.jones@datawise.net', 'DataWise Solutions', 'Paris', 'France', 'Data@Wise987'),
+('maria.garcia@techforward.org', 'TechForward Inc', 'Madrid', 'Spain', 'TechF@rward'),
+('kenji.tanaka@innovate.jp', 'Innovate Systems', 'Tokyo', 'Japan', 'Inn0v@t3JP');
 GO
 
 INSERT INTO [Category] (CategoryName, [Description]) VALUES
