@@ -14,7 +14,7 @@ public static class DatabaseConfigure
         {
             throw new InvalidOperationException("EStore connection string not found");
         }
-        
+
         builder.Services.AddDbContext<EStoreDbContext>(options =>
         {
             options.UseSqlServer(connectionString);
