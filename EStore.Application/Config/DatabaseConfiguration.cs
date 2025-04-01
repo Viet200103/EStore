@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EStore.Application.Config;
 
-public static class DatabaseConfigure
+public static class DatabaseConfiguration
 {
 
     public static void Configure(IConfiguration configuration, WebApplicationBuilder builder)
