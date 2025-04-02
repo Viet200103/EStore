@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EStore.Business.Repository
+namespace EStore.Business.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {

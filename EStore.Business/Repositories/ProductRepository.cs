@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EStore.Business.Repository
+namespace EStore.Business.Repositories
 {
     public class ProductRepository : IProductRepository
     {
@@ -73,7 +73,7 @@ namespace EStore.Business.Repository
 
         public async Task<List<Product>> GetPageProductsAsync(int pageIndex, int pageSize)
         {
-           return await _dbContext.Products.Include(p => p.Category).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
+            return await _dbContext.Products.Include(p => p.Category).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
         }
 
         public async Task<Product> GetProductByIdAsync(int id)
@@ -110,6 +110,6 @@ namespace EStore.Business.Repository
             }
         }
 
-        
+
     }
 }

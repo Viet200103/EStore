@@ -48,9 +48,9 @@ public class EStoreDbContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
 
-            entity.Property(e => e.Password)
-                .HasMaxLength(30)
-                .IsUnicode(false);
+            //entity.Property(e => e.Password)
+            //    .HasMaxLength(30)
+            //    .IsUnicode(false);
         });
 
         modelBuilder.Entity<Order>(entity =>

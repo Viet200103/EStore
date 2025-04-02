@@ -1,13 +1,13 @@
 ﻿using EStore.Application.Components;
-using EStore.Business.Repository;
 using EStore.Business.Services;
-using EStore.Business.Services.IServices;
 using EStore.Data.Database;
 using EStore.Data.Repositories;
 using MentorLink.Business.Mapper;
 using Microsoft.EntityFrameworkCore;
 
 using EStore.Application.Config;
+using EStore.Business.Repositories;
+using EStore.Business.Service.IService;
 
 
 var builder = WebApplication.CreateBuilder(args);

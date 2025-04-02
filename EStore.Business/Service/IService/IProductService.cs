@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EStore.Business.Services.IServices
+namespace EStore.Business.Service.IService
 {
     public interface IProductService
     {
