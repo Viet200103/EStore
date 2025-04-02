@@ -17,7 +17,11 @@
 <p>
     <a href="products/create">Create New</a>
 </p>
-@if(ListProductDTOs == null) {
+<div class="mb-3">
+    <input @bind="searchTerm" @bind:event="oninput" placeholder="Search products..." class="form-control" />
+</div>
+@if (ListProductDTOs == null)
+{
     <p class="text-danger">Error: Unable to load products. Please try again later.</p>
 }
 else{
@@ -78,20 +82,81 @@ else{
             }
         </tbody>
     </table>
+    
+    <div class="pagination-controls">
+        <input type="button" class="btn-lg btn" id="prev" @onclick="PreviousPage" value="Prev" />
+        <input type="button" class="btn-lg btn" id="prev" @onclick="NextPage" value="Next" />
+    </div>
 }
 
 
 @code {
     private List<ProductDTO> ListProductDTOs = new();
+    private int _currentPage = 0;
+    private int pageSize = 10;
+    private int totalPages;
+	private string searchTerm = "";
+	private List<ProductDTO> FilteredProducts = new();
 
     protected override async Task OnInitializedAsync()
     {
-        try{
-            ListProductDTOs = await ProductService.GetAllProductAsync();
+             try{
+                 ListProductDTOs = await ProductService.GetAllProductAsync();
+             }
+             catch (Exception ex) {
+                 Console.Error.WriteLine($"Error loading products: {ex.Message}");
+        NavigationManager.NavigateTo("/error");
+             }
+        // await LoadProducts();
+    }
+
+    private async Task ApplySearchFilter()
+    {
+        
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            FilteredProducts = ListProductDTOs;
         }
-        catch (Exception ex) {
-            Console.Error.WriteLine($"Error loading products: {ex.Message}");
-			NavigationManager.NavigateTo("/error");
+        else
+        {
+            FilteredProducts = ListProductDTOs
+                .Where(p => p.ProductName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                            (p.Category?.CategoryName ?? "").Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
+    }
+
+    private async Task LoadProducts()
+    {
+        // var totalProducts = await ProductService.GetTotalProductsAsync();
+        // totalPages = (int)Math.Ceiling(totalProducts / (double)pageSize);
+
+        // ListProductDTOs = await ProductService.GetPageProductsAsync(_currentPage, pageSize);
+		// ApplySearchFilter();
+		
+		
+      
+    }
+
+    protected async void PreviousPage()
+    {
+        if (_currentPage > 0)
+        {
+            _currentPage--;
+
+            await LoadProducts();
+            
+        }
+    }
+
+    protected async void NextPage()
+    {
+        if (_currentPage < totalPages - 1)
+        {
+            _currentPage++;
+            await LoadProducts();
+        }
+      
+        
     }
 }

@@ -38,7 +38,7 @@
             <div class="mb-3">
                 <label for="weight" class="form-label">Weight:</label> 
                 <InputText id="weight" @bind-Value="Product.Weight" class="form-control" /> 
-                <ValidationMessage For="() => Product.Weight" class="text-danger" /> 
+                <ValidationMessage For="() => Product.Weight" class="text-danger" />
             </div>        
             <div class="mb-3">
                 <label for="unitprice" class="form-label">UnitPrice:</label> 
@@ -64,22 +64,31 @@
     private CreateProductDTO Product { get; set; } = new();
     private List<AddCategoryDTO> Categories { get; set; } = new();
 
-    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     protected override async Task OnInitializedAsync()
     {
         try{
+            
             Categories = await CategoryService.GetAllCategoryAsync();
+			if (Categories == null)
+			{
+				NavigationManager.NavigateTo("error");
+			}   
         }
         catch (Exception ex) {
             NavigationManager.NavigateTo("error");
-
         }
     }
     private async Task AddProduct()
     {
         try
         {
-            await ProductService.AddProductAsync(Product);
+		
+            var isCreated = await ProductService.AddProductAsync(Product);
+			if (!isCreated)
+			{       
+                NavigationManager.NavigateTo("/create");
+
+			}
 		}
 		catch (Exception ex)
 		{

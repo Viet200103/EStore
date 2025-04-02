@@ -15,6 +15,8 @@ namespace EStore.Business.Services.IServices
         Task<bool> AddProductAsync(CreateProductDTO product);
         Task<bool> DeleteProductAsync(int id);
         Task<bool> UpdateProductAsync(ProductDTO product);
-        Task<ProductDTO> GetProductForUpdateAsync(int id);
+        Task<List<ProductDTO>> GetPageProductsAsync(int pageIndex, int pageSize);
+        Task<int> GetTotalProductsAsync();
+
     }
 }

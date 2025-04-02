@@ -3,9 +3,9 @@
 @using EStore.Business.Services.IServices
 @using Microsoft.EntityFrameworkCore
 @using EStore.Data.Models
-@inject NavigationManager NavigationManager
-@inject ICategoryService CategoryService
 @inject IProductService ProductService
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
 
 <PageTitle>Edit</PageTitle>
 
@@ -23,19 +23,21 @@ else
         <div class="col-md-4">
             <EditForm method="post" Model="Product" OnValidSubmit="UpdateProduct" FormName="edit" Enhance>
                 <DataAnnotationsValidator />
-                <ValidationSummary role="alert" />
+                <ValidationSummary role="alert"/>
                 <input type="hidden" name="Product.ProductId" value="@Product.ProductId" />
-                <div class="mb-3">
-                    <label for="categoryid" class="form-label">CategoryId:</label>
-                    <InputSelect id="categoryid" class="form-control" @bind-Value="Product.CategoryId">
-                        <option value="">Please select a category</option>
-                        @foreach (var category in Categories)
-                        {
-                            <option value="@category.CategoryId">@category.CategoryName</option>
-                        }
-                    </InputSelect>
-                    <ValidationMessage For="() => Product.CategoryId" class="text-danger" />
-                </div>
+                @* <div class="mb-3"> *@
+                @*     <label for="categoryid" class="form-label">CategoryId:</label> *@
+                @*     <InputNumber id="categoryid" @bind-Value="Product.CategoryId" class="form-control" /> *@
+                @*     <ValidationMessage For="() => Product.CategoryId" class="text-danger" /> *@
+                @* </div> *@
+                <InputSelect id="categoryid" class="form-control" @bind-Value="Product.CategoryId">
+                    <option value="">Please select a category</option>
+                    @foreach (var category in Categories)
+                    {
+                        <option value="@category.CategoryId">@category.CategoryName</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => Product.CategoryId" class="text-danger" />
                 <div class="mb-3">
                     <label for="productname" class="form-label">ProductName:</label>
                     <InputText id="productname" @bind-Value="Product.ProductName" class="form-control" />
@@ -72,31 +74,49 @@ else
 
     [SupplyParameterFromForm]
     private ProductDTO? Product { get; set; }
-    private List<AddCategoryDTO> Categories { get; set; } = new();
+
+	private List<AddCategoryDTO> Categories { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        Categories = await CategoryService.GetAllCategoryAsync();
-		Product = await ProductService.GetProductByIdAsync(ProductId);
+       
+		Product ??= await ProductService.GetProductByIdAsync(ProductId);
+		Categories = await CategoryService.GetAllCategoryAsync();
 
+        if (Product is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
     }
 
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateProduct()
-    {    
+    {
+        
+
         try
         {
-
-            await ProductService.UpdateProductAsync(Product);
-            
+            if (Product is null)
+            {
+                NavigationManager.NavigateTo("products");
+            }
+			await ProductService.UpdateProductAsync(Product!);
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Error updating product: {ex.Message}");
-            NavigationManager.NavigateTo("/error");
-        }
-        NavigationManager.NavigateTo("/products");
 
-        
+            if (Product is null)
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/products");
     }
 
 }

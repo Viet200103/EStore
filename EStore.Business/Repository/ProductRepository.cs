@@ -64,16 +64,24 @@ namespace EStore.Business.Repository
             }
             catch (Exception ex)
             {
+                _logger.LogError("Error when get all product", ex);
+
                 throw new Exception(ex.InnerException.Message);
             }
 
+        }
+
+        public async Task<List<Product>> GetPageProductsAsync(int pageIndex, int pageSize)
+        {
+           return await _dbContext.Products.Include(p => p.Category).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
         }
 
         public async Task<Product> GetProductByIdAsync(int id)
         {
             try
             {
-                return await _dbContext.Products.Include(p => p.Category).FirstOrDefaultAsync(x => x.ProductId == id);
+                var product = await _dbContext.Products.Include(p => p.Category).FirstOrDefaultAsync(x => x.ProductId == id);
+                return product;
             }
             catch (Exception ex)
             {
@@ -82,29 +90,16 @@ namespace EStore.Business.Repository
             }
         }
 
-        public async Task<Product> GetProductForUpdateAsync(int id)
+        public async Task<int> GetTotalProductsAsync()
         {
-            return await _dbContext.Products.AsNoTracking().Include(p => p.Category).FirstOrDefaultAsync(x => x.ProductId == id);
-
+            return await _dbContext.Products.CountAsync();
         }
 
         public async Task<bool> UpdateProductAsync(Product product)
         {
             try
             {
-                _dbContext.ChangeTracker.Clear();
-                var existingProduct =  await _dbContext.Products.FirstOrDefaultAsync(x => x.ProductId == product.ProductId);
-                if (existingProduct == null)
-                {
-                    _logger.LogWarning($"Product with id {product.ProductId} is not found.");
-                    return false;
-                }
-                existingProduct.ProductName = product.ProductName;
-                existingProduct.CategoryId = product.CategoryId;
-                existingProduct.Weight = product.Weight;
-                existingProduct.UnitPrice = product.UnitPrice;
-                existingProduct.UnitslnStock = product.UnitslnStock;
-                existingProduct.Category = product.Category;
+                _dbContext.Products.Update(product);
                 await _dbContext.SaveChangesAsync();
                 return true; ;
             }

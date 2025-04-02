@@ -29,6 +29,11 @@ namespace EStore.Business.Services
            try
             {
                 var newProduct = _mapper.Map<Product>(product);
+                if (newProduct == null)
+                {
+                    _logger.LogWarning("Product is null");
+                    throw new ArgumentNullException("Product is null!!!");
+                }
                 return await _productRepository.AddProductAsync(newProduct);
             }
             catch (Exception ex)
@@ -42,6 +47,12 @@ namespace EStore.Business.Services
         {
            try
             {
+                if (id <= 0)
+                {
+                    _logger.LogWarning("Product id is not valid");
+                    throw new ArgumentNullException("Product id is not valid!!!");
+                }
+
                 return await _productRepository.DeleteProductAsync(id);
             }
             catch (Exception ex)
@@ -56,8 +67,32 @@ namespace EStore.Business.Services
             try
             {
                 List<Product> list = await _productRepository.GetAllProductAsync();
+                if (list == null)
+                {
+                    _logger.LogWarning("Product list is null");
+                    throw new ArgumentNullException("Product list is null!!!");
+                }
                 return _mapper.Map<List<ProductDTO>>(list);
                 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error in business layer when adding product", ex);
+                throw;
+            }
+        }
+
+        public async Task<List<ProductDTO>> GetPageProductsAsync(int pageIndex, int pageSize)
+        {
+            try
+            {
+                var list = await _productRepository.GetPageProductsAsync(pageIndex, pageSize);
+                if (list == null)
+                {
+                    _logger.LogWarning("Product list is null");
+                    throw new ArgumentNullException("Product list is null!!!");
+                }
+                return _mapper.Map<List<ProductDTO>>(list);
             }
             catch (Exception ex)
             {
@@ -70,6 +105,11 @@ namespace EStore.Business.Services
         {
            try
             {
+                if (id <= 0)
+                {
+                    _logger.LogWarning("Product id is not valid");
+                    throw new ArgumentNullException("Product id is not valid!!!");
+                }
                 return _mapper.Map<ProductDTO>( await _productRepository.GetProductByIdAsync(id));
             }
             catch (Exception ex)
@@ -79,17 +119,9 @@ namespace EStore.Business.Services
             }
         }
 
-        public async Task<ProductDTO> GetProductForUpdateAsync(int id)
+        public async Task<int> GetTotalProductsAsync()
         {
-            try
-            {
-                return _mapper.Map<ProductDTO>(await _productRepository.GetProductForUpdateAsync(id));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Error in business layer when adding product", ex);
-                throw;
-            }
+            return await _productRepository.GetTotalProductsAsync();
         }
 
         public async Task<bool> UpdateProductAsync(ProductDTO productDTO)
@@ -105,5 +137,6 @@ namespace EStore.Business.Services
                 throw;
             }
         }
+
     }
 }
