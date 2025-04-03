@@ -10,5 +10,6 @@ namespace EStore.Business.Service.IService
         Task<IEnumerable<OrderDetailDTO>> GetAllOrderDetailByOrderAsync(int orderId);
         Task<OrderDetailDTO> GetOrderDetailByIdAsync(int orderDetailId);
         Task<bool> DeleteOrderDetailAsync(int orderDetailId);
+        Task<IList<SalesReport>> GetSalesReportAsync(DateTime startDate, DateTime endDate);
     }
 }

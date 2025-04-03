@@ -4,7 +4,6 @@ using EStore.Business.Service.IService;
 using EStore.Data.Models;
 using EStore.Data.Repositories;
 
-
 namespace EStore.Business.Service
 {
     public class OrderDetailService : IOrderDetailService
@@ -31,6 +30,11 @@ namespace EStore.Business.Service
         {
             var orderDetail = await _repository.GetOrderDetailByIdAsync(orderDetailId);
             return _mapper.Map<OrderDetailDTO>(orderDetail);
+        }
+
+        public async Task<IList<SalesReport>> GetSalesReportAsync(DateTime startDate, DateTime endDate)
+        {
+            return await _repository.GetSalesReportAsync(startDate, endDate);
         }
     }
 }

@@ -44,5 +44,38 @@ namespace EStore.Business.Repositories
         {
             return await _context.OrderDetails.Include(o => o.Product).FirstOrDefaultAsync(o => o.OrderDetailId == orderDetailId);
         }
+
+        public async Task<IList<SalesReport>> GetSalesReportAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var result = await _context.OrderDetails
+                    .Where(o => o.Order != null && o.Product != null
+                             && o.Order.OrderDate >= startDate
+                             && o.Order.OrderDate <= endDate)
+                    .Select(o => new SalesReport
+                    {
+                        OrderDate = o.Order.OrderDate,
+                        ProductName = o.Product.ProductName,
+                        Quantity = o.Quantity,
+                        UnitPrice = o.UnitPrice,
+                        Discount = o.Discount
+                    })
+                    .ToListAsync();
+
+                if (!result.Any())
+                {
+                    Console.WriteLine("No sales data found for the selected period.");
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetSalesReportAsync: {ex.Message}");
+                return new List<SalesReport>();
+            }
+        }
+
     }
 }

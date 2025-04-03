@@ -8,4 +8,5 @@ public interface IOrderDetailRepository
     Task<OrderDetail> GetOrderDetailByIdAsync(int orderDetailId);
     Task<OrderDetail> CreateOrderDetailAsync(OrderDetail orderDetail);
     Task<bool> DeleteOrderDetailAsync(int orderDetailId);
+    Task<IList<SalesReport>> GetSalesReportAsync(DateTime startDate, DateTime endDate);
 }

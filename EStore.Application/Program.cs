@@ -30,7 +30,6 @@ builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
 
 
-
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
