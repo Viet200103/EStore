@@ -63,6 +63,7 @@ namespace EStore.Business.Repositories
             return await _dbContext.Members
                 .Select(m => new Member
                 {
+                    MemberId = m.MemberId,
                     Email = m.Email,
                     Password = m.Password,
                 })
