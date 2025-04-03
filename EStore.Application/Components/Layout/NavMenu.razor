@@ -1,29 +1,65 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">EStore.Application</a>
+﻿@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+    <div class="container">
+        <a class="navbar-brand non-underline text-dark fs-6 fw-bold" href="/">EStore</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                @* List menu item*@
+            </ul>
+            <ul class="navbar-nav d-flex align-items-center gap-2">
+                @if (_isAuthenticated)
+                {
+                    @if (_isStaff)
+                    {
+                        <a class="btn btn-sm fw-bold px-4 @(IsActive("/orders") ? "btn-primary active" : "btn-outline-primary")"
+                           href="/orders">
+                            Orders
+                        </a>
+                        <a class="btn btn-sm fw-bold px-4 @(IsActive("/members/profile") ? "btn-primary active" : "btn-outline-primary")"
+                           href="/members/profile">
+                            Profile
+                        </a>
+                    }
+
+                    <a class="btn btn-sm btn-outline-primary px-4 @(IsActive("/logout") ? "active" : "")"
+                       href="/logout">
+                        Logout
+                    </a>
+                }
+            </ul>
+        </div>
     </div>
-</div>
+</nav>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
+@code {
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
+    private bool _isAuthenticated = false;
+    private bool _isStaff = false;
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
+        _isAuthenticated = user.Identity?.IsAuthenticated ?? false;
+        _isStaff = user.IsInRole("Member"); // Kiểm tra role của user
+    }
+
+    private bool IsActive(string href)
+    {
+        var currentUri = Navigation.Uri;
+        var baseUri = Navigation.BaseUri;
+        var relativeUri = currentUri.Replace(baseUri, "/");
+        return relativeUri.TrimEnd('/').Equals(href.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+    }
+
+}

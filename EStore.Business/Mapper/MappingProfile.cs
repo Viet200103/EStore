@@ -2,14 +2,20 @@
 using EStore.Business.DTOs;
 using EStore.Data.Models;
 
-namespace MentorLink.Business.Mapper;
-
-public class MappingProfile : Profile
+namespace EStore.Business.Mapper
 {
-    public MappingProfile()
+    public class MappingProfile : Profile
     {
-        CreateMap<Product, ProductDTO>().ReverseMap();
-        CreateMap<Product, CreateProductDTO>().ReverseMap();
-        CreateMap<Category, AddCategoryDTO>().ReverseMap();
+        public MappingProfile()
+        {
+            CreateMap<Order, OrderDTO>()
+                .ForMember(dest => dest.MemberEmail, opt => opt.MapFrom(src => src.Member.Email))
+                .ReverseMap();
+            CreateMap<CreateMemberDTO, Member>().ForMember(dest => dest.MemberId, opt => opt.Ignore());
+            
+            CreateMap<Product, ProductDTO>().ReverseMap();
+            CreateMap<Product, CreateProductDTO>().ReverseMap();
+            CreateMap<Category, AddCategoryDTO>().ReverseMap();
+        }
     }
 }
