@@ -33,7 +33,7 @@ public class AuthService(
         return new AccessToken { Token = token };
     }
 
-    public async Task<AccessToken> AdminLogin(LoginRequestDTO loginRequestDTO)
+    public Task<AccessToken> AdminLogin(LoginRequestDTO loginRequestDTO)
     {
         if (loginRequestDTO.Email == null)
         {
@@ -47,6 +47,6 @@ public class AuthService(
         };
         
         string token = tokenProvider.GenerateToken(admin, ["Admin"]);
-        return new AccessToken { Token = token };
+        return Task.FromResult(new AccessToken { Token = token });
     }
 }
