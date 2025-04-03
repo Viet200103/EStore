@@ -4,7 +4,7 @@ namespace EStore.Business.Services.IServices
 {
     public interface IMemberService
     {
-        Task<IList<MemberDTO>> GetMembersAsync();
+        Task<(IEnumerable<MemberDTO> membersDTO, int totalPage)> GetMembers(int pageNumber, int pageSize);
         Task<MemberDTO> GetMemberByIdAsync(int id);
         Task<bool> UpdateMemberAsync(MemberDTO member);
         Task<bool> CreateMemberAsync(CreateMemberDTO member);

@@ -42,11 +42,6 @@ namespace EStore.Business.Repositories
             }
         }
 
-        public async Task<IList<Member>> GetAllAsync()
-        {
-            return await _dbContext.Members.ToListAsync();
-        }
-
         public Task<Member> GetByIdAsync(int id)
         {
             return _dbContext.Members.FirstOrDefaultAsync(m => m.MemberId == id);
@@ -75,6 +70,28 @@ namespace EStore.Business.Repositories
                     Password = m.Password,
                 })
                 .SingleOrDefaultAsync(m => m.Email == email);
+        }
+
+        public async Task<(IEnumerable<Member> members, int totalPage)> GetMembers(int pageNumber, int pageSize)
+        {
+            if (pageNumber < 1)
+            {
+                pageNumber = 1;
+            }
+            
+            IQueryable<Member> query = _dbContext.Members
+                .TagWith("GetMembers")
+                .AsNoTracking();
+            
+            int count = await query.CountAsync();
+            var totalPage = count == 0 ? 1 : (int) Math.Ceiling((double) count / pageSize);
+            
+            IEnumerable<Member> members = await query
+                .Skip((pageNumber - 1)  * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+            
+            return (members, totalPage);
         }
     }
 }
