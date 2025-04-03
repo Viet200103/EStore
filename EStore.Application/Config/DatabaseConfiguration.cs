@@ -14,10 +14,11 @@ public static class DatabaseConfiguration
         {
             throw new InvalidOperationException("EStore connection string not found");
         }
-        
+
         builder.Services.AddDbContext<EStoreDbContext>(options =>
         {
             options.UseSqlServer(connectionString);
         });
     }
 }
+

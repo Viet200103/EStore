@@ -2,15 +2,22 @@
 
 namespace EStore.Business.DTOs
 {
-    public class MemberDTO
+    public class CreateMemberDTO
     {
-        [Required]
-        public int MemberId { get; set; }
-
         [Required]
         [EmailAddress]
         [MaxLength(100)]
         public string Email { get; set; } = null!;
+        
+        [Required]
+        [DataType(DataType.Password)]
+        [MaxLength(30)]
+        public string Password { get; set; }
+        
+        [Required]
+        [DataType(DataType.Password)]
+        [MaxLength(30)]
+        public string ConfirmPassword { get; set; }
         
         [Required]
         [MaxLength(40)]

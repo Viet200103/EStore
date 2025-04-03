@@ -45,7 +45,7 @@ public static class SecurityConfiguration
             {
                 OnMessageReceived = context =>
                 {
-                    string? authToken = context.Request.Query[Utils.AccessToken];
+                    string? authToken = context.Request.Cookies[Utils.AccessToken];
                     if (!authToken.IsNullOrEmpty())
                     {
                         context.Token = authToken;

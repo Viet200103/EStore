@@ -1,0 +1,48 @@
+﻿@page "/orders"
+@attribute [Authorize]
+@using EStore.Business.Services.IServices
+@using EStore.Business.DTOs
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IOrderService OrderService
+
+<PageTitle>Orders</PageTitle>
+
+<h1>Orders</h1>
+
+<p>
+    <a href="orders/create">Create New Order</a>
+</p>
+
+@if (Orders == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <QuickGrid Class="table" Items="Orders?.AsQueryable()">
+        <PropertyColumn Property="order => order.OrderId" />
+        <PropertyColumn Property="order => order.MemberEmail" />
+        <PropertyColumn Property="order => order.OrderDate" />
+        <PropertyColumn Property="order => order.RequireDate" />
+        <PropertyColumn Property="order => order.ShippedDate" />
+        <PropertyColumn Property="order => order.Freight" />
+
+        <TemplateColumn Context="order">
+            <a href="@($"orders/edit?orderid={order.OrderId}")">Edit</a> |
+            <a href="@($"orders/details?orderid={order.OrderId}")">Details</a> |
+            <a href="@($"orders/delete?orderid={order.OrderId}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+}
+
+@code {
+    private IOrderService _orderService;
+    private List<OrderDTO>? Orders;
+
+    protected override async Task OnInitializedAsync()
+    
+    {
+        Orders = (await OrderService.GetAllOrdersAsync()).ToList();
+    }
+}

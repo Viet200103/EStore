@@ -14,7 +14,7 @@ public class Order
 
     public decimal? Freight { get; set; }
 
-    public Member? Member { get; set; } 
+    public Member? Member { get; set; }
 
     public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 }

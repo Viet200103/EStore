@@ -53,12 +53,17 @@ html, body {
 }
 
 .table-container {
-    max-height: 80vh;
+    width: 100%;
     overflow: auto;
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 8px;
     position: relative;
     background: white;
+}
+
+.table-container table {
+    width: 100%;
+    table-layout: auto;
 }
 
 .table-container td,
@@ -90,10 +95,6 @@ html, body {
     padding: 8px 12px;
 }
 
-.table-container table {
-    width: 100%;
-}
-
 .table-container tbody {
     width: max-content;
     overflow: clip;
@@ -107,43 +108,32 @@ html, body {
 }
 
 
-.table-number-column {
+.table-small-column {
     width: 20px;
+    max-width: 100px;
     text-align: start;
     vertical-align: center;
 }
 
-.table-title-column {
+.table-lg-column {
     min-width: 200px;
     max-width: 400px;
     word-wrap: break-word;
 }
 
-.table-author-name-column {
-    min-width: 100px;
-}
-
-.table-date-column {
-    min-width: 100px;
-}
-
-.table-description-column {
-    min-width: 400px;
-    max-width: 400px;
+.table-xlg-column {
+    min-width: 300px;
+    max-width: 600px;
     word-wrap: break-word;
 }
 
-.table-status-column {
-    min-width: 100px;
-}
-
-.table-action-column {
+.table-medium-column {
     width: fit-content;
     min-width: 120px;
-    text-align: center !important;
+    max-width: 200px;
 }
 
-.table-action-column div {
+.table-medium-column div {
     display: flex;
     justify-content: center;
     gap: 8px;
