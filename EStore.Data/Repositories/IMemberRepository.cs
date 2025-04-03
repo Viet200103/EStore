@@ -8,5 +8,6 @@ public interface IMemberRepository
     Task<bool> DeleteMemberAsync(int id);
     Task<IList<Member>> GetAllAsync();
     Task<Member> GetByIdAsync(int id);
+    Task<Member?> GetByEmailAsync(string email);
     Task<bool> UpdateMemberAsync(Member member);
 }

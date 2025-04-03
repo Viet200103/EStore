@@ -12,5 +12,7 @@ public class Member
 
     public string? Country { get; set; }
 
+    public string Password { get; set; } = null!;
+
     public ICollection<Order> Orders { get; set; } = new List<Order>();
 }

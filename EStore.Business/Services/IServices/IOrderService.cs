@@ -15,6 +15,7 @@ namespace EStore.Business.Services.IServices
         Task<IList<OrderDTO>> GetAllOrdersAsync();
         Task<OrderDTO?> GetOrderByIdAsync(int id);
         Task<IList<OrderDTO>> GetOrdersByMemberIdAsync(int memberId);
+        Task<List<CreateProductOrderDTO>> GetAvailableProductsAsync();
         Task UpdateOrderAsync(OrderDTO orderDTO);
     }
 }

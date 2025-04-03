@@ -1,0 +1,54 @@
+﻿@* @page "/orders/details" *@
+@* @using Microsoft.EntityFrameworkCore *@
+@* @using EStore.Data.Models *@
+@* @inject IDbContextFactory<EStore.Data.Database.EStoreContext> DbFactory *@
+@* @inject NavigationManager NavigationManager *@
+
+@* <PageTitle>Details</PageTitle> *@
+
+@* <h1>Details</h1> *@
+
+@* <div> *@
+@*     <h2>Order</h2> *@
+@*     <hr /> *@
+@*     @if (order is null) *@
+@*     { *@
+@*         <p><em>Loading...</em></p> *@
+@*     } *@
+@*     else { *@
+@*         <dl class="row"> *@
+@*             <dt class="col-sm-2">MemberId</dt> *@
+@*             <dd class="col-sm-10">@order.MemberId</dd> *@
+@*             <dt class="col-sm-2">OrderDate</dt> *@
+@*             <dd class="col-sm-10">@order.OrderDate</dd> *@
+@*             <dt class="col-sm-2">RequireDate</dt> *@
+@*             <dd class="col-sm-10">@order.RequireDate</dd> *@
+@*             <dt class="col-sm-2">ShippedDate</dt> *@
+@*             <dd class="col-sm-10">@order.ShippedDate</dd> *@
+@*             <dt class="col-sm-2">Freight</dt> *@
+@*             <dd class="col-sm-10">@order.Freight</dd> *@
+@*         </dl> *@
+@*         <div> *@
+@*             <a href="@($"/orders/edit?orderid={order.OrderId}")">Edit</a> | *@
+@*             <a href="@($"/orders")">Back to List</a> *@
+@*         </div> *@
+@*     } *@
+@* </div> *@
+
+@* @code { *@
+@*     private Order? order; *@
+
+@*     [SupplyParameterFromQuery] *@
+@*     private int OrderId { get; set; } *@
+
+@*     protected override async Task OnInitializedAsync() *@
+@*     { *@
+@*         using var context = DbFactory.CreateDbContext(); *@
+@*         order = await context.Orders.FirstOrDefaultAsync(m => m.OrderId == OrderId); *@
+
+@*         if (order is null) *@
+@*         { *@
+@*             NavigationManager.NavigateTo("notfound"); *@
+@*         } *@
+@*     } *@
+@* } *@

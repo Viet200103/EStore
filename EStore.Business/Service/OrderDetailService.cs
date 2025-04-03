@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EStore.Business.DTOs.OrderDetailDTO;
+using EStore.Business.DTOs;
 using EStore.Business.Service.IService;
 using EStore.Data.Models;
 using EStore.Data.Repositories;

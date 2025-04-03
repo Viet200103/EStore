@@ -6,13 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EStore.Business.DTOs.OrderDetailDTO
+namespace EStore.Business.DTOs
 {
     public class OrderDetailDTO
     {
         public int OrderDetailId { get; set; }
 
         public int? OrderId { get; set; }
+
+        public int ProductId { get; set; }
 
         public string? ProductName { get; set; }
 

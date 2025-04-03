@@ -12,14 +12,14 @@ namespace EStore.Business.DTOs
         [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string MemberEmail { get; set; }
 
-        [Required(ErrorMessage = "Order Date is required.")]
         public DateTime? OrderDate { get; set; }
 
-        [Required(ErrorMessage = "Require Date is required.")]
         public DateTime? RequireDate { get; set; }
         public DateTime? ShippedDate { get; set; }
 
         [Range(0, double.MaxValue, ErrorMessage = "Freight must be a positive value.")]
-        public decimal? Freight { get; set; }
+        public decimal? Freight { get; set; } = 0;
+
+        public List<OrderDetailDTO> OrderDetails { get; set; } = new();
     }
 }

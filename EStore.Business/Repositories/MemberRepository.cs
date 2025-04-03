@@ -47,6 +47,11 @@ namespace EStore.Business.Repositories
             return await _dbContext.Members.ToListAsync();
         }
 
+        public async Task<Member?> GetByEmailAsync(string email)
+        {
+            return await _dbContext.Members.FirstOrDefaultAsync(m => m.Email == email);
+        }
+
         public Task<Member> GetByIdAsync(int id)
         {
             return _dbContext.Members.FirstOrDefaultAsync(m => m.MemberId == id);

@@ -1,5 +1,8 @@
-﻿using EStore.Data.Models;
+﻿using EStore.Business.DTOs;
+using EStore.Data.Database;
+using EStore.Data.Models;
 using EStore.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +13,23 @@ namespace EStore.Business.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        public Task<Product> GetProductByIdAsync(int id)
+        private readonly EStoreDbContext _context;
+
+        public ProductRepository(EStoreDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<IList<Product>> GetProductsAsync()
+        public async Task<IList<Product>> GetAvailableProductsAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Products
+        .Where(p => p.UnitslnStock > 0)
+        .ToListAsync();
+        }
+
+        public async Task<Product?> GetProductByIdAsync(int id)
+        {
+            return await _context.Products.FindAsync(id);
         }
     }
 }
