@@ -2,6 +2,7 @@
 using EStore.Data.Database;
 using EStore.Data.Models;
 using EStore.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace EStore.Business.Repositories
 {

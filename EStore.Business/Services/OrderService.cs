@@ -25,7 +25,7 @@ namespace EStore.Business.Services
 
         public async Task CreateOrderAsync(OrderDTO orderDTO)
         {
-            var user = await _memberRepository.GetByEmailAsync(orderDTO.MemberEmail);
+            var user = await _memberRepository.GetMemberByEmail(orderDTO.MemberEmail);
 
             if (user == null)
             {
