@@ -1,8 +1,12 @@
 ﻿@page "/members/edit/{memberId:int}"
+@attribute [Authorize(Roles = "Admin, Member")]
 @using EStore.Business.DTOs
 @using EStore.Business.Services.IServices
+@using Microsoft.AspNetCore.Authorization
 @inject IMemberService Service
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
 
 <PageTitle>Member account</PageTitle>
 
@@ -46,15 +50,17 @@
                         <InputText id="country" @bind-Value="Member.Country" class="form-control"/>
                         <ValidationMessage For="() => Member.Country" class="text-danger"/>
                     </div>
-                    <button type="submit" class="btn btn-primary col-3">Save</button>
+                    <button type="submit" class="btn btn-primary col-4">Save</button>
                 </EditForm>
             </div>
         </div>
     }
-    <div class="mt-2">
-        <a href="/members">Back to List</a>
-    </div>
-
+    @if (_isAdmin)
+    {
+        <div class="mt-2">
+            <a href="/members">Back to List</a>
+        </div>
+    }
 </div>
 
 @code {
@@ -65,13 +71,17 @@
     [SupplyParameterFromForm] 
     private MemberDTO? Member { get; set; }
 
+    private bool _isAdmin = false;
+    
     private string? _message;
     private bool _isError;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _isAdmin = authState.User.IsInRole("Admin");
+        
         Member ??= await Service.GetMemberById(MemberId);
-
         if (Member is null)
         {
             NavigationManager.NavigateTo("/not-found");
