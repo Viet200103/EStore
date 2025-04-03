@@ -1,95 +1,104 @@
-﻿@page "/members/edit"
+﻿@page "/members/edit/{memberId:int}"
 @using EStore.Business.DTOs
 @using EStore.Business.Services.IServices
-@using Microsoft.EntityFrameworkCore
-@using EStore.Data.Models
-@inject IMemberService service
+@inject IMemberService Service
 @inject NavigationManager NavigationManager
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>Member account</PageTitle>
 
-<h1>Edit</h1>
-
-<h2>Member</h2>
-<hr />
-@if (Member is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="Member" OnValidSubmit="UpdateMember" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary role="alert" />
-                <input type="hidden" name="Member.MemberId" value="@Member.MemberId" />
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email:</label>
-                    <InputText id="email" @bind-Value="Member.Email" class="form-control" />
-                    <ValidationMessage For="() => Member.Email" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="companyname" class="form-label">CompanyName:</label>
-                    <InputText id="companyname" @bind-Value="Member.CompanyName" class="form-control" />
-                    <ValidationMessage For="() => Member.CompanyName" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="city" class="form-label">City:</label>
-                    <InputText id="city" @bind-Value="Member.City" class="form-control" />
-                    <ValidationMessage For="() => Member.City" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="country" class="form-label">Country:</label>
-                    <InputText id="country" @bind-Value="Member.Country" class="form-control" />
-                    <ValidationMessage For="() => Member.Country" class="text-danger" />
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </EditForm>
+<div class="container py-4">
+    <h3 class="my-4">Update member account</h3>
+    @if (Member is null)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-6">
+                @if (!String.IsNullOrEmpty(_message))
+                {
+                    var messAttr = _isError ? "alert-danger" : "alert-success";
+                    <div class="alert @messAttr">@_message</div>
+                }
+                <EditForm method="post" Model="Member" OnValidSubmit="UpdateMember" FormName="edit" Enhance>
+                    <DataAnnotationsValidator/>
+                    <input type="hidden" name="Member.MemberId" value="@Member.MemberId"/>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email: </label>
+                        <InputText id="email" @bind-Value="Member.Email" class="form-control"/>
+                        <ValidationMessage For="() => Member.Email" class="text-danger"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="companyname" class="form-label">Company name: </label>
+                        <InputText id="companyname" @bind-Value="Member.CompanyName" class="form-control"/>
+                        <ValidationMessage For="() => Member.CompanyName" class="text-danger"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City: </label>
+                        <InputText id="city" @bind-Value="Member.City" class="form-control"/>
+                        <ValidationMessage For="() => Member.City" class="text-danger"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country: </label>
+                        <InputText id="country" @bind-Value="Member.Country" class="form-control"/>
+                        <ValidationMessage For="() => Member.Country" class="text-danger"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary col-3">Save</button>
+                </EditForm>
+            </div>
         </div>
+    }
+    <div class="mt-2">
+        <a href="/members">Back to List</a>
     </div>
-}
 
-<div>
-    <a href="/members">Back to List</a>
 </div>
 
 @code {
-    [SupplyParameterFromQuery]
-    private int MemberId { get; set; }
 
-    [SupplyParameterFromForm]
+    [Parameter] 
+    public int MemberId { get; set; }
+
+    [SupplyParameterFromForm] 
     private MemberDTO? Member { get; set; }
+
+    private string? _message;
+    private bool _isError;
 
     protected override async Task OnInitializedAsync()
     {
-        Member ??= await service.GetMemberByIdAsync(MemberId);
+        Member ??= await Service.GetMemberById(MemberId);
 
         if (Member is null)
         {
-            NavigationManager.NavigateTo("notfound");
+            NavigationManager.NavigateTo("/not-found");
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateMember()
     {
         try
         {
-            await service.UpdateMemberAsync(Member);
-        }
-        catch (Exception ex)
-        {
             if (Member == null)
             {
-                NavigationManager.NavigateTo("notfound");
+                throw new Exception("An error occurred, please try again.");
             }
-            else
+
+            var isUpdate = await Service.UpdateMember(Member);
+            if (isUpdate)
             {
-                throw;
+                _message = "Update member information is successfully";
+                _isError = false;
             }
         }
-        NavigationManager.NavigateTo("/members");
+        catch (Exception e)
+        {
+            _message = e.Message;
+            _isError = true;
+        }
     }
+
 }

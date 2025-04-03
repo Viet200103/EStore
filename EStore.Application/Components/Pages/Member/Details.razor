@@ -43,7 +43,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        member = await service.GetMemberByIdAsync(MemberId);
+        member = await service.GetMemberById(MemberId);
 
         if (member is null)
         {
