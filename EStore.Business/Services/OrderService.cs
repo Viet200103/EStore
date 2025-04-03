@@ -3,7 +3,6 @@ using EStore.Business.DTOs;
 using EStore.Business.Services.IServices;
 using EStore.Data.Models;
 using EStore.Data.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace EStore.Business.Services
 {

@@ -3,7 +3,7 @@
 using EStore.Business.DTOs;
 using EStore.Data.Models;
 
-namespace EStore.Business.Service.IService
+namespace EStore.Business.Services.IServices
 {
     public interface IOrderDetailService
     {

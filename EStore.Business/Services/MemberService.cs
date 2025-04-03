@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using EStore.Business.DTOs;
-using EStore.Business.Service.IService;
+using EStore.Business.Services.IServices;
 using EStore.Data.Models;
 using EStore.Data.Repositories;
 
-namespace EStore.Business.Service
+namespace EStore.Business.Services
 {
     public class MemberService : IMemberService
     {
@@ -28,16 +28,17 @@ namespace EStore.Business.Service
             return _repository.DeleteMemberAsync(id);
         }
 
+        public async Task<(IEnumerable<MemberDTO> membersDTO, int totalPage)> GetMembers(int pageNumber, int pageSize)
+        {
+            var (members, totalPage) = await _repository.GetMembers(pageNumber, pageSize);
+            IEnumerable<MemberDTO> membersDTO = _mapper.Map<IList<MemberDTO>>(members);
+            return (membersDTO, totalPage);
+        }
+
         public async Task<MemberDTO> GetMemberByIdAsync(int id)
         {
             Member member = await _repository.GetByIdAsync(id);
             return _mapper.Map<MemberDTO>(member);
-        }
-
-        public async Task<IList<MemberDTO>> GetMembersAsync()
-        {
-            IList<Member> members = await _repository.GetAllAsync();
-            return _mapper.Map<IList<MemberDTO>>(members);
         }
 
         public async Task<bool> UpdateMemberAsync(MemberDTO memberDTO)

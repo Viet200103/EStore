@@ -1,13 +1,12 @@
 ﻿using EStore.Business.Repositories;
-using EStore.Business.Service;
-using EStore.Business.Service.IService;
+using EStore.Business.Security;
 using EStore.Business.Services;
 using EStore.Business.Services.IServices;
 using EStore.Data.Repositories;
 
 namespace EStore.Application.Config
 {
-    public static class DependencyConfigure
+    public static class DependencyConfiguration
     {
         public static void ConfigForServices(IServiceCollection services)
         {
@@ -15,6 +14,10 @@ namespace EStore.Application.Config
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IMemberService, MemberService>();
 
+            services.AddScoped<IAuthService, AuthService>();
+
+            services.AddScoped<ITokenProvider, TokenProvider>();
+            services.AddHttpContextAccessor();
         }
 
         public static void ConfigForRepositories(IServiceCollection services)

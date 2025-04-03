@@ -1,6 +1,8 @@
 ﻿@page "/orders"
+@attribute [Authorize]
 @using EStore.Business.Services.IServices
 @using EStore.Business.DTOs
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.QuickGrid
 @inject IOrderService OrderService
 
