@@ -94,5 +94,10 @@ namespace EStore.Business.Repositories
             
             return (members, totalPage);
         }
+
+        public async Task<List<Member>> GetAllAsync()
+        {
+            return await _dbContext.Members.ToListAsync();
+        }
     }
 }

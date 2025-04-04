@@ -32,14 +32,15 @@ namespace EStore.Business.Services
                 throw new KeyNotFoundException($"User {orderDTO.MemberEmail} not found.");
             }
 
-            var order = _mapper.Map<Order>(orderDTO);
-            order.Member = user;
-            order.MemberId = user.MemberId;
-            order.OrderDate = DateTime.Now;
-            order.RequireDate = DateTime.Now.AddDays(7);
-            order.Freight = 0;
+            Order order = new()
+            {
+                Member = user,
+                MemberId = user.MemberId,
+                OrderDate = DateTime.Now,
+                RequireDate = DateTime.Now.AddDays(7),
+                Freight = 0
+            };
 
-            // Validate Product & Category and update Freight order before saving order
             foreach (var orderDetail in order.OrderDetails)
             {
                 var existingProduct = await _productRepository.GetProductByIdAsync(orderDetail.ProductId);
@@ -88,7 +89,26 @@ namespace EStore.Business.Services
         public async Task<OrderDTO?> GetOrderByIdAsync(int id)
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
-            return order == null ? null : _mapper.Map<OrderDTO>(order);
+            if (order == null)
+            {
+                throw new KeyNotFoundException("Order not found.");
+            }
+
+            var result = _mapper.Map<OrderDTO>(order);
+            var products = await GetAvailableProductsAsync();
+
+            foreach (var item in result.OrderDetails)
+            {
+                foreach(var product in products)
+                {
+                    if (item.ProductId == product.ProductId)
+                    {
+                        item.ProductName = product.ProductName;
+                    }
+                }
+            } 
+
+            return result;
         }
 
         public async Task<IList<OrderDTO>> GetOrdersByMemberIdAsync(int memberId)

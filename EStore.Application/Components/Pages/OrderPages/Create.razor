@@ -3,8 +3,8 @@
 @using EStore.Business.DTOs
 @using EStore.Business.Services.IServices
 @inject IOrderService OrderService
+@inject IMemberService MemberService
 @inject NavigationManager NavigationManager
-
 @rendermode InteractiveServer
 
 <PageTitle>Create</PageTitle>
@@ -14,16 +14,23 @@
 <h2>Order</h2>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <EditForm Model="OrderDTO" OnValidSubmit="CreateOrder" FormName="CreateOrderForm">
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert" />
 
             <div class="mb-3">
                 <label for="memberemail" class="form-label">Member Email:</label>
-                <InputText id="memberemail" @bind-Value="OrderDTO.MemberEmail" class="form-control" />
+                <select id="memberemail" @bind="OrderDTO.MemberEmail" class="form-control">
+                    <option value="" selected disabled>Select a member</option>
+                    @foreach (var member in members)
+                    {
+                        <option value="@member.Email">@member.Email</option>
+                    }
+                </select>
                 <ValidationMessage For="() => OrderDTO.MemberEmail" class="text-danger" />
             </div>
+
             <div class="mb-3">
                 <label class="form-label">Select Products:</label>
                 <div class="table-responsive">
@@ -35,27 +42,34 @@
                                 <th>Stock</th>
                                 <th>Quantity</th>
                                 <th>Discount</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var product in AvailableProducts)
+                            @foreach (var detail in OrderDTO.OrderDetails)
                             {
                                 <tr>
-                                    <td>@product.ProductName</td>
-                                    <td>@product.UnitPrice</td>
-                                    <td>@product.UnitslnStock</td>
                                     <td>
-                                        <InputNumber @bind-Value="product.OrderQuantity" class="form-control"/>
+                                        <select @bind="detail.ProductId" class="form-control">
+                                            @foreach (var product in AvailableProducts)
+                                            {
+                                                <option value="@product.ProductId">@product.ProductName</option>
+                                            }
+                                        </select>
                                     </td>
-                                    <td>
-                                        <InputNumber @bind-Value="product.Discount" class="form-control"/>
-                                    </td>
+                                    <td>@AvailableProducts.FirstOrDefault(p => p.ProductId == detail.ProductId)?.UnitPrice</td>
+                                    <td>@AvailableProducts.FirstOrDefault(p => p.ProductId == detail.ProductId)?.UnitslnStock</td>
+                                    <td><input type="number" class="form-control" @bind="detail.Quantity" min="1" /></td>
+                                    <td><input type="number" class="form-control" @bind="detail.Discount" min="0" /></td>
+                                    <td><button type="button" class="btn btn-danger" @onclick="() => RemoveProduct(detail)">Remove</button></td>
                                 </tr>
                             }
                         </tbody>
                     </table>
+                    <button type="button" class="btn btn-success" @onclick="AddProduct">Add Product</button>
                 </div>
             </div>
+
             <button type="submit" class="btn btn-primary">Create Order</button>
         </EditForm>
     </div>
@@ -71,52 +85,19 @@
 </div>
 
 @code {
-    private OrderDTO OrderDTO = new();
+    private OrderDTO OrderDTO = new() { OrderDetails = new List<OrderDetailDTO>() };
+    private List<MemberDTO> members = new();
     private List<CreateProductOrderDTO> AvailableProducts = new();
     private string ErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
+        members = await MemberService.GetAllMembersAsync();
         AvailableProducts = await OrderService.GetAvailableProductsAsync();
     }
 
     private async Task CreateOrder()
     {
-        if (!AvailableProducts.Any(p => p.OrderQuantity > 0))
-        {
-            ErrorMessage = "Please select at least one product.";
-            return;
-        }
-
-        if(AvailableProducts.Any(p => p.OrderQuantity < 0))
-        {
-            ErrorMessage = "One or more product have invalid Quantiy";
-            return;
-        }
-
-        if (AvailableProducts.Any(p => p.OrderQuantity > p.UnitslnStock))
-        {
-            ErrorMessage = "One or more products exceed available stock.";
-            return;
-        }
-
-        if (AvailableProducts.Any(p => p.Discount < 0))
-        {
-            ErrorMessage = "One or more product have invalid Discount";
-            return;
-        }
-
-        OrderDTO.OrderDetails = AvailableProducts
-            .Where(p => p.OrderQuantity > 0)
-            .Select(p => new OrderDetailDTO
-                {
-                    ProductId = p.ProductId,
-                    UnitPrice = p.UnitPrice,
-                    Quantity = p.OrderQuantity,
-                    Discount = p.Discount
-                })
-            .ToList();
-
         try
         {
             await OrderService.CreateOrderAsync(OrderDTO);
@@ -127,4 +108,14 @@
             ErrorMessage = ex.Message;
         }
     }
- }
+
+    private void AddProduct()
+    {
+        OrderDTO.OrderDetails.Add(new OrderDetailDTO());
+    }
+
+    private void RemoveProduct(OrderDetailDTO detail)
+    {
+        OrderDTO.OrderDetails.Remove(detail);
+    }
+}
