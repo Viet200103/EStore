@@ -1,9 +1,8 @@
 ﻿using EStore.Application.Components;
 using EStore.Application.Config;
 using EStore.Business.Contants;
+using EStore.Business.Mappers;
 using EStore.Business.Security;
-using EStore.Business.Mapper;
-using MentorLink.Business.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 

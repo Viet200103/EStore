@@ -2,7 +2,7 @@
 using EStore.Business.DTOs;
 using EStore.Data.Models;
 
-namespace EStore.Business.Mapper;
+namespace EStore.Business.Mappers;
 
 public class MappingProfile : Profile
 {
@@ -11,9 +11,14 @@ public class MappingProfile : Profile
         CreateMap<Order, OrderDTO>()
             .ForMember(dest => dest.MemberEmail, opt => opt.MapFrom(src => src.Member.Email))
             .ReverseMap();
-
+        
+        CreateMap<OrderDetail, OrderDetailDTO>()
+            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName))
+            .ReverseMap();
+        
         CreateMap<Product, CreateProductOrderDTO>().ReverseMap();
 
+        CreateMap<Member, MemberDTO>().ReverseMap();
         CreateMap<CreateMemberDTO, Member>().ForMember(dest => dest.MemberId, opt => opt.Ignore());
             
         CreateMap<Product, ProductDTO>().ReverseMap();
