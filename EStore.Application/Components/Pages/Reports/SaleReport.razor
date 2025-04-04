@@ -1,8 +1,10 @@
 ﻿@page "/sales-report"
-@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
 @using EStore.Business.Services.IServices
 @using EStore.Data.Models
+@using Microsoft.AspNetCore.Authorization
 @inject IOrderDetailService OrderDetailService
+@rendermode InteractiveServer
 
 <PageTitle>Sales Report</PageTitle>
 

@@ -1,9 +1,9 @@
 ﻿@page "/products/edit"
+@attribute [Authorize(Roles = "Admin")]
 @using EStore.Business.DTOs
 @using EStore.Business.Service.IService
 @using EStore.Business.Services.IServices
-@using Microsoft.EntityFrameworkCore
-@using EStore.Data.Models
+@using Microsoft.AspNetCore.Authorization
 @inject IProductService ProductService
 @inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
@@ -25,11 +25,6 @@ else
             <EditForm method="post" Model="Product" OnValidSubmit="UpdateProduct" FormName="edit" Enhance>
                 <DataAnnotationsValidator />
                 <input type="hidden" name="Product.ProductId" value="@Product.ProductId" />
-                @* <div class="mb-3"> *@
-                @*     <label for="categoryid" class="form-label">CategoryId:</label> *@
-                @*     <InputNumber id="categoryid" @bind-Value="Product.CategoryId" class="form-control" /> *@
-                @*     <ValidationMessage For="() => Product.CategoryId" class="text-danger" /> *@
-                @* </div> *@
                 <InputSelect id="categoryid" class="form-control" @bind-Value="Product.CategoryId">
                     <option value="">Please select a category</option>
                     @foreach (var category in Categories)
