@@ -1,5 +1,5 @@
 ﻿@page "/orders"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin")]
 @using EStore.Business.Services.IServices
 @using EStore.Business.DTOs
 @using Microsoft.AspNetCore.Authorization
@@ -8,62 +8,64 @@
 
 <PageTitle>Orders</PageTitle>
 
-<h1>Orders</h1>
+<div class="container d-flex flex-column gap-4">
+    <h3 class="my-4">Order management</h3>
 
-<p>
-    <a href="orders/create">Create New Order</a>
-</p>
-
-@if (orderDTOs == null)
-{
+    <div class="d-flex justify-content-end">
+        <a class="btn btn-primary ms-2" href="orders/create">+ Create New</a>
+    </div>
+    
+    @if (orderDTOs == null)
+    {
     <p>Loading...</p>
-}
-else
-{
+    }
+    else
+    {
     <table class="table">
         <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Member Email</th>
-                <th>Order Date</th>
-                <th>Require Date</th>
-                <th>Shipped Date</th>
-                <th>Freight</th>
-                <th>Total Amount</th>
-                <th>Actions</th>
-            </tr>
+        <tr>
+            <th>Order ID</th>
+            <th>Member Email</th>
+            <th>Order Date</th>
+            <th>Require Date</th>
+            <th>Shipped Date</th>
+            <th>Freight</th>
+            <th>Total Amount</th>
+            <th>Actions</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var order in orderDTOs)
-            {
-                <tr>
-                    <td>@order.OrderId</td>
-                    <td>@order.MemberEmail</td>
-                    <td>@order.OrderDate</td>
-                    <td>@order.RequireDate</td>
-                    <td>@(order.ShippedDate)</td>
-                    <td>@order.Freight?.ToString("C", _USD)</td>
-                    <td>
-                        @if (order.OrderDetails != null && order.OrderDetails.Any())
-                        {
-                            var totalAmount = order.OrderDetails.Sum(item => (double)(item.Quantity * item.UnitPrice) * (1 - item.Discount / 100)) + (double)order.Freight;
-                            @totalAmount.ToString("C", _USD)
-                        }
-                        else
-                        {
-                            @order.Freight?.ToString("C", _USD)
-                        }
-                    </td>
-                    <td>
-                        <a href="@($"orders/edit?orderid={order.OrderId}")">Edit</a> |
-                        <a href="@($"orders/details?orderid={order.OrderId}")">Details</a> |
-                        <a href="@($"orders/delete?orderid={order.OrderId}")">Delete</a>
-                    </td>
-                </tr>
-            }
+        @foreach (var order in orderDTOs)
+        {
+        <tr>
+            <td>@order.OrderId</td>
+            <td>@order.MemberEmail</td>
+            <td>@order.OrderDate</td>
+            <td>@order.RequireDate</td>
+            <td>@(order.ShippedDate)</td>
+            <td>@order.Freight?.ToString("C", _USD)</td>
+            <td>
+                @if (order.OrderDetails.Any())
+                {
+                var totalAmount = order.OrderDetails.Sum(item => (double)(item.Quantity * item.UnitPrice) * (1 - item.Discount / 100)) + (double)order.Freight;
+                @totalAmount.ToString("C", _USD)
+                }
+                else
+                {
+                @order.Freight?.ToString("C", _USD)
+                }
+            </td>
+            <td>
+                <a href="@($"orders/edit?orderid={order.OrderId}")">Edit</a> |
+                <a href="@($"orders/details?orderid={order.OrderId}")">Details</a> |
+                <a href="@($"orders/delete?orderid={order.OrderId}")">Delete</a>
+            </td>
+        </tr>
+        }
         </tbody>
     </table>
-}
+    }
+</div>
 
 @code {
     private IList<OrderDTO>? orderDTOs = new List<OrderDTO>();
