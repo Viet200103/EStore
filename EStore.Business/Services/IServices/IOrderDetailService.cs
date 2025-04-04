@@ -1,4 +1,5 @@
 ﻿using EStore.Business.DTOs.OrderDetailDTO;
+using EStore.Data.Models;
 
 namespace EStore.Business.Services.IServices
 {

@@ -22,14 +22,7 @@ builder.Services
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
-
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
-
-
-builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
-
 
 var app = builder.Build();
 
