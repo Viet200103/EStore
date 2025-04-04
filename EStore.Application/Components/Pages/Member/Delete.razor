@@ -3,7 +3,7 @@
 @using EStore.Business.Services.IServices
 @using Microsoft.EntityFrameworkCore
 @using EStore.Data.Models
-@inject IMemberService service
+@inject IMemberService MemberService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Delete</PageTitle>
@@ -55,7 +55,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        member = await service.GetMemberByIdAsync(MemberId);
+        member = await MemberService.GetMemberById(MemberId);
 
         if (member is null)
         {
@@ -67,7 +67,7 @@
     {
         try
         {
-            await service.DeleteMemberAsync(MemberId);
+            await MemberService.DeleteMember(MemberId);
         }
         catch (Exception ex)
         {

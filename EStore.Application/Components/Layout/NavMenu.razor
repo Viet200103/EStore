@@ -1,30 +1,65 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="/">EStore.Application</a>
+﻿@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+    <div class="container">
+        <a class="navbar-brand non-underline text-dark fs-6 fw-bold" href="/">EStore</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="/">Home</NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="counter">Counter</NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="weather">Weather</NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="/members">Member</NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="orderdetails/1">Order Detail</NavLink>
-                </li>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                @* List menu item*@
+            </ul>
+            <ul class="navbar-nav d-flex align-items-center gap-2">
+                @if (_isAuthenticated)
+                {
+                    @if (_isStaff)
+                    {
+                        <a class="btn btn-sm fw-bold px-4 @(IsActive("/orders") ? "btn-primary active" : "btn-outline-primary")"
+                           href="/orders">
+                            Orders
+                        </a>
+                        <a class="btn btn-sm fw-bold px-4 @(IsActive("/members/profile") ? "btn-primary active" : "btn-outline-primary")"
+                           href="/members/profile">
+                            Profile
+                        </a>
+                    }
+
+                    <a class="btn btn-sm btn-outline-primary px-4 @(IsActive("/logout") ? "active" : "")"
+                       href="/logout">
+                        Logout
+                    </a>
+                }
             </ul>
         </div>
     </div>
 </nav>
+
+@code {
+
+    private bool _isAuthenticated = false;
+    private bool _isStaff = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        _isAuthenticated = user.Identity?.IsAuthenticated ?? false;
+        _isStaff = user.IsInRole("Member"); // Kiểm tra role của user
+    }
+
+    private bool IsActive(string href)
+    {
+        var currentUri = Navigation.Uri;
+        var baseUri = Navigation.BaseUri;
+        var relativeUri = currentUri.Replace(baseUri, "/");
+        return relativeUri.TrimEnd('/').Equals(href.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+    }
+
+}

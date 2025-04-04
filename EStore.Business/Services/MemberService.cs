@@ -19,13 +19,18 @@ namespace EStore.Business.Services
 
         public async Task<bool> CreateMemberAsync(CreateMemberDTO memberDTO)
         {
+            if (memberDTO.Password != memberDTO.ConfirmPassword)
+            {
+                throw new Exception("Passwords do not match");
+            }
+            
             Member member = _mapper.Map<Member>(memberDTO);
-            return await _repository.CreateMemberAsync(member);
+            return await _repository.CreateMember(member);
         }
 
-        public Task<bool> DeleteMemberAsync(int id)
+        public Task<bool> DeleteMember(int id)
         {
-            return _repository.DeleteMemberAsync(id);
+            return _repository.DeleteMember(id);
         }
 
         public async Task<(IEnumerable<MemberDTO> membersDTO, int totalPage)> GetMembers(int pageNumber, int pageSize)
@@ -35,16 +40,20 @@ namespace EStore.Business.Services
             return (membersDTO, totalPage);
         }
 
-        public async Task<MemberDTO> GetMemberByIdAsync(int id)
+        public async Task<MemberDTO?> GetMemberById(int id)
         {
-            Member member = await _repository.GetByIdAsync(id);
+            Member? member = await _repository.GetMemberById(id);
+            if (member == null)
+            {
+                return null;
+            }
             return _mapper.Map<MemberDTO>(member);
         }
 
-        public async Task<bool> UpdateMemberAsync(MemberDTO memberDTO)
+        public async Task<bool> UpdateMember(MemberDTO memberDTO)
         {
             Member member = _mapper.Map<Member>(memberDTO);
-            return await _repository.UpdateMemberAsync(member);
+            return await _repository.UpdateMember(member);
         }
 
         public async Task<List<MemberDTO>> GetAllMembersAsync()

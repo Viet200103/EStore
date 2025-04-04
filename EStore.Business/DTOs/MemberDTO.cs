@@ -11,12 +11,15 @@ namespace EStore.Business.DTOs
         [EmailAddress]
         [MaxLength(100)]
         public string Email { get; set; } = null!;
+        
         [Required]
         [MaxLength(40)]
         public string? CompanyName { get; set; }
+        
         [Required]
         [MaxLength(15)]
         public string? City { get; set; }
+        
         [Required]
         [MaxLength(15)]
         public string? Country { get; set; }

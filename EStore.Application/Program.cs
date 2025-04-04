@@ -1,5 +1,6 @@
 ﻿using EStore.Application.Components;
 using EStore.Application.Config;
+using EStore.Business.Contants;
 using EStore.Business.Security;
 using EStore.Business.Mapper;
 using MentorLink.Business.Mapper;
@@ -30,6 +31,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
     app.UseMigrationsEndPoint();
 }
+
+app.Map("/logout", (context) =>
+{
+    context.Response.Cookies.Delete(Utils.AccessToken);
+    context.Response.Redirect("/login");
+    return Task.CompletedTask;
+});
 
 app.UseHttpsRedirection();
 

@@ -3,6 +3,8 @@ using EStore.Business.Security;
 using EStore.Business.Services;
 using EStore.Business.Services.IServices;
 using EStore.Data.Repositories;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
 
 namespace EStore.Application.Config
 {
@@ -18,6 +20,7 @@ namespace EStore.Application.Config
 
             services.AddScoped<ITokenProvider, TokenProvider>();
             services.AddHttpContextAccessor();
+            services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
         }
 
         public static void ConfigForRepositories(IServiceCollection services)

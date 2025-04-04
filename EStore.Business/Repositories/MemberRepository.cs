@@ -14,52 +14,48 @@ namespace EStore.Business.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<bool> CreateMemberAsync(Member member)
+        public async Task<bool> CreateMember(Member member)
         {
-            try
+            
+            string normalizedEmail = member.Email.Trim().ToLower();
+            bool isExisted = await _dbContext.Members.AnyAsync(x => x.Email == normalizedEmail);
+            if (isExisted)
             {
-                _dbContext.Add(member);
-                await _dbContext.SaveChangesAsync();
-                return true;
+                throw new Exception($"Email {member.Email} already exists");
             }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.InnerException.Message);
-            }
+            
+            _dbContext.Add(member);
+            var result = await _dbContext.SaveChangesAsync();
+            return result > 0;
         }
 
-        public async Task<bool> DeleteMemberAsync(int id)
+        public async Task<bool> DeleteMember(int id)
         {
-            try
-            {
-                _dbContext.Remove(await GetByIdAsync(id));
-                await _dbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.InnerException.Message);
-            }
+            _dbContext.Remove(new Member() { MemberId = id });
+            var result = await _dbContext.SaveChangesAsync();
+            return result > 0;
         }
 
-
-        public Task<Member> GetByIdAsync(int id)
+        public async Task<Member?> GetMemberById(int id)
         {
-            return _dbContext.Members.FirstOrDefaultAsync(m => m.MemberId == id);
+            return await _dbContext.Members.FirstOrDefaultAsync(m => m.MemberId == id);
         }
 
-        public async Task<bool> UpdateMemberAsync(Member member)
+        public async Task<bool> UpdateMember(Member member)
         {
-            try
+            var memberToUpdate = await _dbContext.Members.FirstOrDefaultAsync(x => x.MemberId == member.MemberId);
+            if (memberToUpdate == null)
             {
-                _dbContext.Members.Update(member);
-                await _dbContext.SaveChangesAsync();
-                return true;
+                throw new Exception($"Member does not exist");
             }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.InnerException.Message);
-            }
+
+            memberToUpdate.Email = member.Email;
+            memberToUpdate.CompanyName = member.CompanyName ?? memberToUpdate.CompanyName;
+            memberToUpdate.City = member.City ?? memberToUpdate.City;
+            memberToUpdate.Country = member.Country ?? memberToUpdate.Country;
+            
+            var result = await _dbContext.SaveChangesAsync();
+            return result > 0;
         }
         
         public async Task<Member?> GetMemberByEmail(string email)
@@ -67,6 +63,7 @@ namespace EStore.Business.Repositories
             return await _dbContext.Members
                 .Select(m => new Member
                 {
+                    MemberId = m.MemberId,
                     Email = m.Email,
                     Password = m.Password,
                 })
@@ -88,6 +85,7 @@ namespace EStore.Business.Repositories
             var totalPage = count == 0 ? 1 : (int) Math.Ceiling((double) count / pageSize);
             
             IEnumerable<Member> members = await query
+                .OrderByDescending(member => member.MemberId)
                 .Skip((pageNumber - 1)  * pageSize)
                 .Take(pageSize)
                 .ToListAsync();

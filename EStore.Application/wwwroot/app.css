@@ -63,7 +63,7 @@ html, body {
 
 .table-container table {
     width: 100%;
-    table-layout: fixed;
+    table-layout: auto;
 }
 
 .table-container td,
@@ -93,10 +93,6 @@ html, body {
     border-right: 1px solid rgba(0, 0, 0, 0.15);
     border-bottom: 1px solid rgba(0, 0, 0, 0.15);
     padding: 8px 12px;
-}
-
-.table-container table {
-    width: 100%;
 }
 
 .table-container tbody {

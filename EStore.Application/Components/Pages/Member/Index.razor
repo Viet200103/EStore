@@ -4,7 +4,7 @@
 @using EStore.Business.Services.IServices
 @using EStore.Application.Components.Layout
 @using Microsoft.AspNetCore.Authorization
-@inject IMemberService Service;
+@inject IMemberService MemberService;
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
@@ -94,11 +94,12 @@
 
     int _currentPage = 1;
     int _totalPages = 1;
-    readonly int _pageSize = 1;
+    readonly int _pageSize = 3;
 
     private ConfirmDialog _confirmDialog = null!;
     private MemberDTO? _memberToDelete;
-
+    private bool showDeleteDialog = false;
+    
     protected override async Task OnInitializedAsync()
     {
         await LoadMembers(_currentPage);
@@ -108,7 +109,7 @@
     {
         if (pageNumber < 1) pageNumber = 1;
 
-        var (membersDTO, totalPages) = await Service.GetMembers(pageNumber, _pageSize);
+        var (membersDTO, totalPages) = await MemberService.GetMembers(pageNumber, _pageSize);
         _members = membersDTO;
         _totalPages = totalPages;
         _currentPage = pageNumber;
@@ -127,23 +128,17 @@
         Navigation.NavigateTo($"/members/edit/{member.MemberId}");
     }
 
-    private async Task DeleteMember(MemberDTO member)
-    {
-        // await Service.DeleteMember(member.Id);
-        await LoadMembers(_currentPage);
-    }
-
     private void ShowDeleteConfirm(MemberDTO member)
     {
         _memberToDelete = member;
         _confirmDialog.Show();
     }
-
+    
     private async Task ConfirmDelete()
     {
         if (_memberToDelete != null)
         {
-            // await Service.DeleteMember(_memberToDelete.Id);
+            await MemberService.DeleteMember(_memberToDelete.MemberId);
             await LoadMembers(_currentPage);
             _memberToDelete = null;
         }
