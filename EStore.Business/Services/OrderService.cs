@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EStore.Business.DTOs;
+using EStore.Business.Security;
 using EStore.Business.Services.IServices;
 using EStore.Data.Models;
 using EStore.Data.Repositories;
@@ -133,6 +134,12 @@ namespace EStore.Business.Services
 
             var order = _mapper.Map(orderDTO, existingOrder);
             await _orderRepository.UpdateOrderAsync(order);
+        }
+
+        public async Task<List<OrderDTO>> GetOrdersByCurrentMemberAsync(int userId)
+        {
+            var result = await _orderRepository.GetOrdersByMemberIdAsync(userId);
+            return _mapper.Map<List<OrderDTO>>(result);
         }
     }
 }

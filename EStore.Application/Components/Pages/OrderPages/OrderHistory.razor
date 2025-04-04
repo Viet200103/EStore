@@ -1,0 +1,86 @@
+﻿@page "/order-history"
+@using EStore.Business.DTOs
+@using EStore.Business.Security
+@using EStore.Business.Services.IServices
+@using System.Globalization
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IOrderService OrderService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<div class="container mx-auto p-4">
+    <h2 class="text-3xl font-semibold mb-8 text-gray-800">🧾 Order History</h2>
+
+    @if (orders == null)
+    {
+        <div class="text-center py-8">
+            <p class="text-gray-600 italic">Loading data...</p>
+        </div>
+    }
+    else if (!orders.Any())
+    {
+        <div class="text-center py-8">
+            <p class="text-gray-600 italic">No orders found.</p>
+        </div>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 gap-6">
+            @foreach (var order in orders)
+            {
+                <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 text-sm text-gray-700">
+                            <div><span class="font-semibold">Order ID:</span> @order.OrderId</div>
+                            <div><span class="font-semibold">Order Date:</span> @order.OrderDate?.ToString("dd/MM/yyyy")</div>
+                            <div><span class="font-semibold">Required Date:</span> @order.RequireDate?.ToString("dd/MM/yyyy")</div>
+                            <div><span class="font-semibold">Shipped Date:</span> @order.ShippedDate?.ToString("dd/MM/yyyy")</div>
+                            <div class="md:col-span-2"><span class="font-semibold">Freight:</span> <span class="text-green-600 font-medium">@((order.Freight?.ToString("C", _USD) ?? "Free"))</span></div>
+                        </div>
+
+                        <details class="mt-4">
+                            <summary class="cursor-pointer text-blue-600 hover:underline font-medium">View Order Details</summary>
+                            <ul class="mt-4 space-y-4 text-sm text-gray-600">
+                                @foreach (var detail in order.OrderDetails)
+                                {
+                                    <li class="border border-gray-100 rounded-lg p-4 bg-gray-50">
+                                        <div><strong>Product:</strong> @AvailableProducts.FirstOrDefault(p => p.ProductId == detail.ProductId)?.ProductName</div>
+                                        <div><strong>Quantity:</strong> @detail.Quantity</div>
+                                        <div><strong>Unit Price:</strong> @detail.UnitPrice.ToString("C", _USD)</div>
+                                        <div><strong>Discount:</strong> @(detail.Discount * 100)%</div>
+                                        <div><strong>Total:</strong> @(((double)(detail.UnitPrice * detail.Quantity) * (1 - detail.Discount)).ToString("C", _USD))</div>
+                                    </li>
+                                }
+                            </ul>
+                        </details>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<OrderDTO>? orders;
+    private readonly CultureInfo _USD = new("en-US");
+    private List<CreateProductOrderDTO> AvailableProducts = new();
+    private int _userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is null || !user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login", true);
+            return;
+        }
+
+        var userHelp = new UserHelper(user);
+        _userId = userHelp.GetUserId();
+
+        orders = await OrderService.GetOrdersByCurrentMemberAsync(_userId);
+        AvailableProducts = await OrderService.GetAvailableProductsAsync();
+    }
+}
