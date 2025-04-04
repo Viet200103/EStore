@@ -114,6 +114,12 @@ public class EStoreDbContext : DbContext
             entity.Property(e => e.Weight)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+            
+            entity.HasOne(p => p.Category)
+            .WithMany()
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FK_Product_Category");
         });
 
     }

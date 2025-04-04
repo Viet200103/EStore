@@ -45,7 +45,7 @@ namespace EStore.Business.Services
 
             foreach (var orderDetail in orderDTO.OrderDetails)
             {
-                var existingProduct = await _productRepository.GetProductByIdAsync(orderDetail.ProductId);
+                var existingProduct = await _productRepository.GetProductById(orderDetail.ProductId);
                 if (existingProduct == null)
                 {
                     throw new Exception($"Product ID {orderDetail.ProductId} does not exist.");
@@ -58,7 +58,7 @@ namespace EStore.Business.Services
                 orderDetails.Add(new()
                 {
                     Product=existingProduct,
-                    UnitPrice= (decimal)existingProduct.UnitPrice,
+                    UnitPrice= (decimal)existingProduct.UnitPrice!,
                     Quantity= orderDetail.Quantity,
                     Discount = orderDetail.Discount
                 });

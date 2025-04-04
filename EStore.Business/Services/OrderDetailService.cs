@@ -31,5 +31,10 @@ namespace EStore.Business.Services
             var orderDetail = await _repository.GetOrderDetailByIdAsync(orderDetailId);
             return _mapper.Map<OrderDetailDTO>(orderDetail);
         }
+
+        public async Task<IList<SalesReport>> GetSalesReportAsync(DateTime startDate, DateTime endDate)
+        {
+            return await _repository.GetSalesReportAsync(startDate, endDate);
+        }
     }
 }

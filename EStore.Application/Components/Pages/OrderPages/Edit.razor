@@ -1,6 +1,8 @@
 ﻿@page "/orders/edit"
+@attribute [Authorize(Roles = "Admin")]
 @using EStore.Business.Services.IServices
 @using EStore.Business.DTOs
+@using Microsoft.AspNetCore.Authorization
 @inject IOrderService OrderService
 @inject NavigationManager NavigationManager
 
@@ -8,61 +10,59 @@
 
 <PageTitle>Edit</PageTitle>
 
-<h1>Edit Order</h1>
-
-<h2>Order</h2>
-<hr />
-@if (Order is null)
-{
-    <p><em>Not Found</em></p>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="Order" OnValidSubmit="UpdateOrder" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
-                <input type="hidden" name="Order.OrderId" value="@Order.OrderId" />
-                <div class="mb-3">
-                    <label for="memberemail" class="form-label">MemberEmail:</label>
-                    <InputText id="memberemail" @bind-Value="Order.MemberEmail" class="form-control" disabled />
-                    <ValidationMessage For="() => Order.MemberEmail" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="orderdate" class="form-label">OrderDate:</label>
-                    <InputDate id="orderdate" @bind-Value="Order.OrderDate" class="form-control" disabled />
-                    <ValidationMessage For="() => Order.OrderDate" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="requiredate" class="form-label">RequireDate:</label>
-                    <InputDate id="requiredate" @bind-Value="Order.RequireDate" class="form-control" disabled />
-                    <ValidationMessage For="() => Order.RequireDate" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="shippeddate" class="form-label">ShippedDate:</label>
-                    <InputDate id="shippeddate" @bind-Value="Order.ShippedDate" class="form-control" disabled />
-                    <ValidationMessage For="() => Order.ShippedDate" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="freight" class="form-label">Freight:</label>
-                    <InputNumber id="freight" @bind-Value="Order.Freight" class="form-control" disabled />
-                    <ValidationMessage For="() => Order.Freight" class="text-danger" />
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </EditForm>
+<div class="container d-flex flex-column gap-4">
+    <h3 class="my-4">Edit Order</h3>
+    @if (Order is null)
+    {
+        <p>
+            <em>Not Found</em>
+        </p>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <EditForm method="post" Model="Order" OnValidSubmit="UpdateOrder" FormName="edit" Enhance>
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary role="alert"/>
+                    <input type="hidden" name="Order.OrderId" value="@Order.OrderId"/>
+                    <div class="mb-3">
+                        <label for="memberemail" class="form-label">MemberEmail:</label>
+                        <InputText id="memberemail" @bind-Value="Order.MemberEmail" class="form-control" disabled/>
+                        <ValidationMessage For="() => Order.MemberEmail" class="text-danger"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="orderdate" class="form-label">OrderDate:</label>
+                        <InputDate id="orderdate" @bind-Value="Order.OrderDate" class="form-control" disabled/>
+                        <ValidationMessage For="() => Order.OrderDate" class="text-danger"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="requiredate" class="form-label">RequireDate:</label>
+                        <InputDate id="requiredate" @bind-Value="Order.RequireDate" class="form-control" disabled/>
+                        <ValidationMessage For="() => Order.RequireDate" class="text-danger"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="shippeddate" class="form-label">ShippedDate:</label>
+                        <InputDate id="shippeddate" @bind-Value="Order.ShippedDate" class="form-control"/>
+                        <ValidationMessage For="() => Order.ShippedDate" class="text-danger"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="freight" class="form-label">Freight:</label>
+                        <InputNumber id="freight" @bind-Value="Order.Freight" class="form-control" disabled/>
+                        <ValidationMessage For="() => Order.Freight" class="text-danger"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </EditForm>
+            </div>
         </div>
+    }
+    <div>
+        <a href="/orders">Back to List</a>
     </div>
-}
-
-<div>
-    <a href="/orders">Back to List</a>
 </div>
 
 @code {
-    [Parameter]
-    [SupplyParameterFromQuery]
-    public int OrderId { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public int OrderId { get; set; }
 
     private OrderDTO? Order { get; set; }
 
@@ -79,4 +79,5 @@ else
             NavigationManager.NavigateTo("/orders");
         }
     }
+
 }

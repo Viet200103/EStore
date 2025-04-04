@@ -18,7 +18,7 @@
             <ul class="navbar-nav d-flex align-items-center gap-2">
                 @if (_isAuthenticated)
                 {
-                    @if (_isStaff)
+                    @if (_isMember)
                     {
                         <a class="btn btn-sm fw-bold px-4 @(IsActive("/orders") ? "btn-primary active" : "btn-outline-primary")"
                            href="/orders">
@@ -28,6 +28,17 @@
                            href="/members/profile">
                             Profile
                         </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-sm fw-bold px-4 @(IsActive("/members") ? "btn-primary active" : "btn-outline-primary")"
+                           href="/members">Members</a>
+                        <a class="btn btn-sm fw-bold px-4 @(IsActive("/sales-report") ? "btn-primary active" : "btn-outline-primary")"
+                           href="/sales-report">Sale statistics</a>
+                        <a class="btn btn-sm fw-bold px-4 @(IsActive("/orders") ? "btn-primary active" : "btn-outline-primary")"
+                           href="/orders">Orders</a>
+                        <a class="btn btn-sm fw-bold px-4 @(IsActive("/products") ? "btn-primary active" : "btn-outline-primary")"
+                           href="/products">Products</a>
                     }
 
                     <a class="btn btn-sm btn-outline-primary px-4 @(IsActive("/logout") ? "active" : "")"
@@ -43,7 +54,7 @@
 @code {
 
     private bool _isAuthenticated = false;
-    private bool _isStaff = false;
+    private bool _isMember = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,7 +62,7 @@
         var user = authState.User;
 
         _isAuthenticated = user.Identity?.IsAuthenticated ?? false;
-        _isStaff = user.IsInRole("Member"); // Kiểm tra role của user
+        _isMember = user.IsInRole("Member"); // Kiểm tra role của user
     }
 
     private bool IsActive(string href)

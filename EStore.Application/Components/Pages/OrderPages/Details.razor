@@ -1,112 +1,114 @@
 ﻿@page "/orders/details"
+@attribute [Authorize(Roles = "Admin")]
 @using EStore.Business.DTOs
 @using EStore.Business.Services.IServices
-@using Microsoft.EntityFrameworkCore
-@using EStore.Data.Models
 @using System.Globalization
 @inject IOrderService Service
+@using Microsoft.AspNetCore.Authorization
 @inject NavigationManager NavigationManager
 
 <PageTitle>Details</PageTitle>
 
-<h1>Details</h1>
-
-<div>
-    <h2>Order</h2>
-    <hr />
-    @if (orderDTO is null)
+<div class="container mt-4">
+    @if (_orderDTO is null)
     {
-        <p><em>Loading...</em></p>
+        <p>
+            <em>Loading...</em>
+        </p>
     }
     else
     {
-        <dl class="row">
-            <dt class="col-sm-2">MemberId</dt>
-            <dd class="col-sm-10">@orderDTO.MemberEmail</dd>
+        <p class="mb-4 fw-bold">Order information</p>
 
-            <dt class="col-sm-2">OrderDate</dt>
-            <dd class="col-sm-10">@orderDTO.OrderDate</dd>
+        <div class="card mb-4">
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Member Email</dt>
+                    <dd class="col-sm-9">@_orderDTO.MemberEmail</dd>
 
-            <dt class="col-sm-2">RequireDate</dt>
-            <dd class="col-sm-10">@orderDTO.RequireDate</dd>
+                    <dt class="col-sm-3">Order Date</dt>
+                    <dd class="col-sm-9">@_orderDTO.OrderDate</dd>
 
-            <dt class="col-sm-2">ShippedDate</dt>
-            <dd class="col-sm-10">@orderDTO.ShippedDate</dd>
+                    <dt class="col-sm-3">Required Date</dt>
+                    <dd class="col-sm-9">@_orderDTO.RequireDate</dd>
 
-            <dt class="col-sm-2">Freight</dt>
-            <dd class="col-sm-10">
-                @orderDTO.Freight?.ToString("C", _USD)
-            </dd>
-        </dl>
+                    <dt class="col-sm-3">Shipped Date</dt>
+                    <dd class="col-sm-9">@_orderDTO.ShippedDate</dd>
 
-        <h3>Order Items</h3>
-        <table class="table">
+                    <dt class="col-sm-3">Freight</dt>
+                    <dd class="col-sm-9">
+                        @_orderDTO.Freight?.ToString("C", _usd)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <table class="table table-striped table-bordered table-hover">
             <thead>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Discount</th>
-                    <th>Total</th>
-                </tr>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Discount</th>
+                <th>Total</th>
+            </tr>
             </thead>
             <tbody>
-                @if (orderDTO.OrderDetails != null && orderDTO.OrderDetails.Any())
+            @if (_orderDTO.OrderDetails.Any())
+            {
+                @foreach (var item in _orderDTO.OrderDetails)
                 {
-                    @foreach (var item in orderDTO.OrderDetails)
-                    {
-                        var total = (double)(item.Quantity * item.UnitPrice) * (1 - item.Discount / 100);
-                        <tr>
-                            <td>@item.ProductName</td>
-                            <td>@item.Quantity</td>
-                            <td>@item.UnitPrice.ToString("C", _USD)</td>
-                            <td>@($"{item.Discount}%")</td>
-                            <td>@total.ToString("C", _USD)</td>
-                        </tr>
-                    }
-                }
-                else
-                {
+                    var total = (double)(item.Quantity * item.UnitPrice) * (1 - item.Discount / 100);
                     <tr>
-                        <td colspan="5" class="text-center">No items found.</td>
+                        <td>@item.ProductName</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.UnitPrice.ToString("C", _usd)</td>
+                        <td>@($"{item.Discount}%")</td>
+                        <td>@total.ToString("C", _usd)</td>
                     </tr>
                 }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center">No items found.</td>
+                </tr>
+            }
             </tbody>
         </table>
+        <h4 class="my-4">Total Amount: <span class="badge bg-success">@_totalAmount.ToString("C", _usd)</span></h4>
 
-        <h3>Total Amount: @TotalAmount.ToString("C", _USD)</h3>
-
-        <div>
-            <a href="@($"/orders/edit?orderid={orderDTO.OrderId}")">Edit</a> |
-            <a href="@($"/orders")">Back to List</a>
+        <div class="mt-4">
+            <a href="@($"/orders/edit?orderid={_orderDTO.OrderId}")" class="btn btn-primary me-2 col-1">Edit</a>
+            <a href="@($"/orders")" class="btn btn-secondary col-1">Back to List</a>
         </div>
     }
 </div>
 
 @code {
-    private OrderDTO? orderDTO;
-    private double TotalAmount = 0;
-    private readonly CultureInfo _USD = new("en-US");
+    private OrderDTO? _orderDTO;
+    private double _totalAmount = 0;
+    private readonly CultureInfo _usd = new("en-US");
 
-    [SupplyParameterFromQuery]
-    private int OrderId { get; set; }
+    [SupplyParameterFromQuery] private int OrderId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        orderDTO = await Service.GetOrderByIdAsync(OrderId);
+        _orderDTO = await Service.GetOrderByIdAsync(OrderId);
 
-        if (orderDTO is null)
+        if (_orderDTO is null)
         {
             NavigationManager.NavigateTo("notfound");
         }
         else
         {
-            if (orderDTO.OrderDetails != null)
+            if (_orderDTO.OrderDetails != null)
             {
-                TotalAmount = orderDTO.OrderDetails.Sum(item =>
+                _totalAmount = _orderDTO.OrderDetails.Sum(item =>
                 (double)(item.Quantity * item.UnitPrice) * (1 - item.Discount))
-                + (double)(orderDTO.Freight ?? 0);
+                + (double)(_orderDTO.Freight ?? 0);
             }
         }
     }
+
 }
