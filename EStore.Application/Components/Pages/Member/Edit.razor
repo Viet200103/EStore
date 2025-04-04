@@ -1,0 +1,114 @@
+﻿@page "/members/edit/{memberId:int}"
+@attribute [Authorize(Roles = "Admin, Member")]
+@using EStore.Business.DTOs
+@using EStore.Business.Services.IServices
+@using Microsoft.AspNetCore.Authorization
+@inject IMemberService Service
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+
+<PageTitle>Member account</PageTitle>
+
+<div class="container py-4">
+    <h3 class="my-4">Update member account</h3>
+    @if (Member is null)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-6">
+                @if (!String.IsNullOrEmpty(_message))
+                {
+                    var messAttr = _isError ? "alert-danger" : "alert-success";
+                    <div class="alert @messAttr">@_message</div>
+                }
+                <EditForm method="post" Model="Member" OnValidSubmit="UpdateMember" FormName="edit" Enhance>
+                    <DataAnnotationsValidator/>
+                    <input type="hidden" name="Member.MemberId" value="@Member.MemberId"/>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email: </label>
+                        <InputText id="email" @bind-Value="Member.Email" class="form-control"/>
+                        <ValidationMessage For="() => Member.Email" class="text-danger"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="companyname" class="form-label">Company name: </label>
+                        <InputText id="companyname" @bind-Value="Member.CompanyName" class="form-control"/>
+                        <ValidationMessage For="() => Member.CompanyName" class="text-danger"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City: </label>
+                        <InputText id="city" @bind-Value="Member.City" class="form-control"/>
+                        <ValidationMessage For="() => Member.City" class="text-danger"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country: </label>
+                        <InputText id="country" @bind-Value="Member.Country" class="form-control"/>
+                        <ValidationMessage For="() => Member.Country" class="text-danger"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary col-4">Save</button>
+                </EditForm>
+            </div>
+        </div>
+    }
+    @if (_isAdmin)
+    {
+        <div class="mt-2">
+            <a href="/members">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+
+    [Parameter] 
+    public int MemberId { get; set; }
+
+    [SupplyParameterFromForm] 
+    private MemberDTO? Member { get; set; }
+
+    private bool _isAdmin = false;
+    
+    private string? _message;
+    private bool _isError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _isAdmin = authState.User.IsInRole("Admin");
+        
+        Member ??= await Service.GetMemberById(MemberId);
+        if (Member is null)
+        {
+            NavigationManager.NavigateTo("/not-found");
+        }
+    }
+
+    private async Task UpdateMember()
+    {
+        try
+        {
+            if (Member == null)
+            {
+                throw new Exception("An error occurred, please try again.");
+            }
+
+            var isUpdate = await Service.UpdateMember(Member);
+            if (isUpdate)
+            {
+                _message = "Update member information is successfully";
+                _isError = false;
+            }
+        }
+        catch (Exception e)
+        {
+            _message = e.Message;
+            _isError = true;
+        }
+    }
+
+}

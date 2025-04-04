@@ -1,0 +1,158 @@
+﻿@page "/members"
+@attribute [Authorize(Roles = "Admin")]
+@using EStore.Business.DTOs
+@using EStore.Business.Services.IServices
+@using EStore.Application.Components.Layout
+@using Microsoft.AspNetCore.Authorization
+@inject IMemberService MemberService;
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Member Management</PageTitle>
+
+<div class="container d-flex flex-column gap-4 py-4">
+    
+    <h3 class="my-4">Member List</h3>
+    
+    <div class="d-flex justify-content-end">
+        <a href="members/create" class="btn btn-primary">Create New</a>
+    </div>
+
+
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th scope="col" class="table-small-column">No.</th>
+                <th scope="col" class="table-xlg-column">Email</th>
+                <th scope="col" class="table-lg-column">Company name</th>
+                <th scope="col" class="table-lg-column">City</th>
+                <th scope="col" class="table-lg-column">Country</th>
+                <th scope="col" class="table-small-column"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @{
+                int position = 1;
+                foreach (MemberDTO member in _members)
+                {
+                    <tr>
+                        <td class="table-small-column">@position</td>
+                        <td class="table-lg-column">@member.Email</td>
+                        <td class="table-author-name-column">@member.CompanyName</td>
+                        <td class="table-date-column">@member.City</td>
+                        <td class="table-author-name-column">@member.Country</td>
+                        <td class="table-medium-column">
+                            <button type="button" class="btn btn-danger" @onclick="() => ShowDeleteConfirm(member)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            <button type="button" class="btn btn-success" @onclick="() => EditMember(member)">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    position += 1;
+                }
+            }
+            </tbody>
+
+            <tfoot>
+
+            </tfoot>
+        </table>
+    </div>
+
+    <nav class="d-flex justify-content-end">
+        <ul class="pagination">
+            <!-- Previous Page Button -->
+            <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => GoToPage(_currentPage - 1)">Previous</button>
+            </li>
+
+            <!-- Page Numbers -->
+            @for (int i = 1; i <= _totalPages; i++)
+            {
+                int pageNumber = i;
+                <li class="page-item @(pageNumber == _currentPage ? "active" : "")">
+                    <button class="page-link" @onclick="@(() => GoToPage(pageNumber))">
+                        @pageNumber
+                    </button>
+                </li>
+            }
+
+            <!-- Next Page Button -->
+            <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                <button class="page-link" @onclick="@(() => GoToPage(_currentPage + 1))">Next</button>
+            </li>
+        </ul>
+    </nav>
+
+    <ConfirmDialog @ref="_confirmDialog"
+                   Message="@($"Are you sure you want to delete {_memberToDelete?.Email}?")"
+                   OnConfirm="ConfirmDelete"
+                   OnCancel="CancelDelete"/>
+
+</div>
+
+@code {
+    IEnumerable<MemberDTO> _members = new List<MemberDTO>();
+
+    int _currentPage = 1;
+    int _totalPages = 1;
+    readonly int _pageSize = 3;
+
+    private ConfirmDialog _confirmDialog = null!;
+    private MemberDTO? _memberToDelete;
+    private bool showDeleteDialog = false;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMembers(_currentPage);
+    }
+
+    private async Task LoadMembers(int pageNumber)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+
+        var (membersDTO, totalPages) = await MemberService.GetMembers(pageNumber, _pageSize);
+        _members = membersDTO;
+        _totalPages = totalPages;
+        _currentPage = pageNumber;
+
+        StateHasChanged();
+    }
+
+    private async Task GoToPage(int pageNumber)
+    {
+        if (pageNumber < 1 || pageNumber > _totalPages) return;
+        await LoadMembers(pageNumber);
+    }
+
+    private void EditMember(MemberDTO member)
+    {
+        Navigation.NavigateTo($"/members/edit/{member.MemberId}");
+    }
+
+    private void ShowDeleteConfirm(MemberDTO member)
+    {
+        _memberToDelete = member;
+        _confirmDialog.Show();
+    }
+    
+    private async Task ConfirmDelete()
+    {
+        if (_memberToDelete != null)
+        {
+            await MemberService.DeleteMember(_memberToDelete.MemberId);
+            await LoadMembers(_currentPage);
+            _memberToDelete = null;
+        }
+    }
+    
+    private Task CancelDelete()
+    {
+        _memberToDelete = null;
+        return Task.CompletedTask;
+    }
+}

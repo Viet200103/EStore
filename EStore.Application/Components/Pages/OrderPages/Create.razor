@@ -1,0 +1,63 @@
+﻿@* @page "/orders/create" *@
+@* @using Microsoft.EntityFrameworkCore *@
+@* @using EStore.Data.Models *@
+@* @inject IDbContextFactory<EStore.Data.Database.EStoreContext> DbFactory *@
+@* @inject NavigationManager NavigationManager *@
+
+@* <PageTitle>Create</PageTitle> *@
+
+@* <h1>Create</h1> *@
+
+@* <h2>Order</h2> *@
+@* <hr /> *@
+@* <div class="row"> *@
+@*     <div class="col-md-4"> *@
+@*         <EditForm method="post" Model="Order" OnValidSubmit="AddOrder" FormName="create" Enhance> *@
+@*             <DataAnnotationsValidator /> *@
+@*             <ValidationSummary class="text-danger" role="alert"/> *@
+@*             <div class="mb-3"> *@
+@*                 <label for="memberid" class="form-label">MemberId:</label>  *@
+@*                 <InputNumber id="memberid" @bind-Value="Order.MemberId" class="form-control" />  *@
+@*                 <ValidationMessage For="() => Order.MemberId" class="text-danger" />  *@
+@*             </div>         *@
+@*             <div class="mb-3"> *@
+@*                 <label for="orderdate" class="form-label">OrderDate:</label>  *@
+@*                 <InputDate id="orderdate" @bind-Value="Order.OrderDate" class="form-control" />  *@
+@*                 <ValidationMessage For="() => Order.OrderDate" class="text-danger" />  *@
+@*             </div>         *@
+@*             <div class="mb-3"> *@
+@*                 <label for="requiredate" class="form-label">RequireDate:</label>  *@
+@*                 <InputDate id="requiredate" @bind-Value="Order.RequireDate" class="form-control" />  *@
+@*                 <ValidationMessage For="() => Order.RequireDate" class="text-danger" />  *@
+@*             </div>         *@
+@*             <div class="mb-3"> *@
+@*                 <label for="shippeddate" class="form-label">ShippedDate:</label>  *@
+@*                 <InputDate id="shippeddate" @bind-Value="Order.ShippedDate" class="form-control" />  *@
+@*                 <ValidationMessage For="() => Order.ShippedDate" class="text-danger" />  *@
+@*             </div>         *@
+@*             <div class="mb-3"> *@
+@*                 <label for="freight" class="form-label">Freight:</label>  *@
+@*                 <InputNumber id="freight" @bind-Value="Order.Freight" class="form-control" />  *@
+@*                 <ValidationMessage For="() => Order.Freight" class="text-danger" />  *@
+@*             </div>         *@
+@*             <button type="submit" class="btn btn-primary">Create</button> *@
+@*         </EditForm> *@
+@*     </div> *@
+@* </div> *@
+
+@* <div> *@
+@*     <a href="/orders">Back to List</a> *@
+@* </div> *@
+
+@* @code { *@
+@*     [SupplyParameterFromForm] *@
+@*     private Order Order { get; set; } = new(); *@
+
+@*     private async Task AddOrder() *@
+@*     { *@
+@*         using var context = DbFactory.CreateDbContext(); *@
+@*         context.Orders.Add(Order); *@
+@*         await context.SaveChangesAsync(); *@
+@*         NavigationManager.NavigateTo("/orders"); *@
+@*     } *@
+@* } *@

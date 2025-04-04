@@ -1,13 +1,13 @@
 ﻿@page "/orderdetails/{orderId:int}"
 @using EStore.Business.DTOs
 @using EStore.Business.DTOs.OrderDetailDTO
-@using EStore.Business.Service.IService
+@using EStore.Business.Services.IServices
 @using Microsoft.AspNetCore.Components.QuickGrid
 @inject IOrderDetailService OrderDetailService
 
-<PageTitle>Order Details</PageTitle>
+<PageTitle>Order Profile</PageTitle>
 
-<h1>Order Details</h1>
+<h1>Order Profile</h1>
 
 @if (orderDetails == null)
 {
@@ -28,7 +28,7 @@ else
 
         <TemplateColumn Context="orderdetail">
             <a href="@($"orderdetails/edit?orderdetailid={orderdetail.OrderDetailId}")">Edit</a> |
-            <a href="@($"orderdetails/details?orderdetailid={orderdetail.OrderDetailId}")">Details</a> |
+            <a href="@($"orderdetails/details?orderdetailid={orderdetail.OrderDetailId}")">Profile</a> |
             <a href="@($"orderdetails/delete?orderdetailid={orderdetail.OrderDetailId}")">Delete</a>
         </TemplateColumn>
     </QuickGrid>

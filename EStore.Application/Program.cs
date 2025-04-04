@@ -1,24 +1,25 @@
-using EStore.Application.Components;
-using EStore.Business.Mappers;
-using EStore.Business.Repositories;
-using EStore.Business.Service;
-using EStore.Business.Service.IService;
-using EStore.Data.Database;
-using EStore.Data.Repositories;
-using Microsoft.EntityFrameworkCore;
+﻿using EStore.Application.Components;
+using EStore.Application.Config;
+using EStore.Business.Contants;
+using EStore.Business.Security;
+using EStore.Business.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
+DatabaseConfiguration.Configure(builder.Configuration, builder);
+SecurityConfiguration.ConfigureAuthJwt(builder.Configuration, builder.Services);
+DependencyConfiguration.ConfigForServices(builder.Services);
+DependencyConfiguration.ConfigForRepositories(builder.Services);
+
+var jwtSection = builder.Configuration.GetSection("JwtOptions");
+builder.Services.Configure<JwtOptions>(jwtSection);
 
 builder.Services
     .AddRazorComponents()
     .AddInteractiveServerComponents();
-builder.Services.AddDbContext<EStoreContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
 
-builder.Services.AddAutoMapper(typeof(CommonMapperProfile));
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
@@ -39,7 +40,17 @@ if (!app.Environment.IsDevelopment())
     app.UseMigrationsEndPoint();
 }
 
+app.Map("/logout", (context) =>
+{
+    context.Response.Cookies.Delete(Utils.AccessToken);
+    context.Response.Redirect("/login");
+    return Task.CompletedTask;
+});
+
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
