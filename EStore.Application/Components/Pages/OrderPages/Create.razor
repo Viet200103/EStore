@@ -98,6 +98,8 @@
 
     private async Task CreateOrder()
     {
+        if (!OrderDTO.OrderDetails.Any()) ErrorMessage = "Plese select product!";
+
         try
         {
             await OrderService.CreateOrderAsync(OrderDTO);

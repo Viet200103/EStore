@@ -25,7 +25,7 @@ namespace EStore.Business.Services
 
         public async Task CreateOrderAsync(OrderDTO orderDTO)
         {
-            var user = await _memberRepository.GetMemberByEmail(orderDTO.MemberEmail);
+            var user = await _memberRepository.GetByEmailAsync(orderDTO.MemberEmail);
 
             if (user == null)
             {
@@ -40,8 +40,9 @@ namespace EStore.Business.Services
                 RequireDate = DateTime.Now.AddDays(7),
                 Freight = 0
             };
+            List<OrderDetail> orderDetails = new();
 
-            foreach (var orderDetail in order.OrderDetails)
+            foreach (var orderDetail in orderDTO.OrderDetails)
             {
                 var existingProduct = await _productRepository.GetProductByIdAsync(orderDetail.ProductId);
                 if (existingProduct == null)
@@ -53,11 +54,19 @@ namespace EStore.Business.Services
                     throw new InvalidOperationException($"Not enough stock for existingProduct {existingProduct.ProductName}. Available: {existingProduct.UnitslnStock}, Requested: {orderDetail.Quantity}");
                 }
 
-                orderDetail.Product = existingProduct;
-                orderDetail.Product.UnitslnStock -= orderDetail.Quantity;
+                orderDetails.Add(new()
+                {
+                    Product=existingProduct,
+                    UnitPrice= (decimal)existingProduct.UnitPrice,
+                    Quantity= orderDetail.Quantity,
+                    Discount = orderDetail.Discount
+                });
 
-                order.Freight += orderDetail.Quantity * orderDetail.UnitPrice * (1 - ((decimal)orderDetail.Discount / 100));
+                order.Freight +=(orderDetail.Quantity * existingProduct.UnitPrice * (1 - ((decimal)orderDetail.Discount / 100)))*(decimal)0.1;
             }
+
+            order.OrderDetails.Clear();
+            order.OrderDetails = orderDetails;
 
             await _orderRepository.CreateOrderAsync(order);
         }
@@ -99,14 +108,14 @@ namespace EStore.Business.Services
 
             foreach (var item in result.OrderDetails)
             {
-                foreach(var product in products)
+                foreach (var product in products)
                 {
                     if (item.ProductId == product.ProductId)
                     {
                         item.ProductName = product.ProductName;
                     }
                 }
-            } 
+            }
 
             return result;
         }
