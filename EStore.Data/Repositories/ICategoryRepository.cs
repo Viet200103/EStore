@@ -10,7 +10,7 @@ namespace EStore.Data.Repositories
     public interface ICategoryRepository
     {
         Task<List<Category>> GetAllCategoryAsync();
-        Task<Category> GetCategoryByIdAsync(int id);
+        Task<Category?> GetCategoryByIdAsync(int id);
         Task<bool> AddCategoryAsync(Category category);
         Task<bool> DeleteCategoryAsync(int id);
         Task<bool> UpdateCategoryAsync(Category category);
