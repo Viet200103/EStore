@@ -65,12 +65,10 @@
 
     <nav class="d-flex justify-content-end">
         <ul class="pagination">
-            <!-- Previous Page Button -->
             <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
                 <button class="page-link" @onclick="() => GoToPage(_currentPage - 1)">Previous</button>
             </li>
 
-            <!-- Page Numbers -->
             @for (int i = 1; i <= _totalPages; i++)
             {
                 int pageNumber = i;
@@ -81,7 +79,6 @@
                 </li>
             }
 
-            <!-- Next Page Button -->
             <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
                 <button class="page-link" @onclick="@(() => GoToPage(_currentPage + 1))">Next</button>
             </li>

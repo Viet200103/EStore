@@ -55,5 +55,11 @@ namespace EStore.Business.Services
             Member member = _mapper.Map<Member>(memberDTO);
             return await _repository.UpdateMember(member);
         }
+
+        public async Task<List<MemberDTO>> GetAllMembersAsync()
+        {
+            var members = await _repository.GetAllAsync();
+            return _mapper.Map<List<MemberDTO>>(members);
+        }
     }
 }

@@ -3,8 +3,8 @@
 @using EStore.Business.Services.IServices
 @using EStore.Business.DTOs
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.QuickGrid
-@inject IOrderService OrderService
+@using System.Globalization
+@inject IOrderService Service
 
 <PageTitle>Orders</PageTitle>
 
@@ -14,35 +14,64 @@
     <a href="orders/create">Create New Order</a>
 </p>
 
-@if (Orders == null)
+@if (orderDTOs == null)
 {
     <p>Loading...</p>
 }
 else
 {
-    <QuickGrid Class="table" Items="Orders?.AsQueryable()">
-        <PropertyColumn Property="order => order.OrderId" />
-        <PropertyColumn Property="order => order.MemberEmail" />
-        <PropertyColumn Property="order => order.OrderDate" />
-        <PropertyColumn Property="order => order.RequireDate" />
-        <PropertyColumn Property="order => order.ShippedDate" />
-        <PropertyColumn Property="order => order.Freight" />
-
-        <TemplateColumn Context="order">
-            <a href="@($"orders/edit?orderid={order.OrderId}")">Edit</a> |
-            <a href="@($"orders/details?orderid={order.OrderId}")">Details</a> |
-            <a href="@($"orders/delete?orderid={order.OrderId}")">Delete</a>
-        </TemplateColumn>
-    </QuickGrid>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Member Email</th>
+                <th>Order Date</th>
+                <th>Require Date</th>
+                <th>Shipped Date</th>
+                <th>Freight</th>
+                <th>Total Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in orderDTOs)
+            {
+                <tr>
+                    <td>@order.OrderId</td>
+                    <td>@order.MemberEmail</td>
+                    <td>@order.OrderDate</td>
+                    <td>@order.RequireDate</td>
+                    <td>@(order.ShippedDate)</td>
+                    <td>@order.Freight?.ToString("C", _USD)</td>
+                    <td>
+                        @if (order.OrderDetails != null && order.OrderDetails.Any())
+                        {
+                            var totalAmount = order.OrderDetails.Sum(item => (double)(item.Quantity * item.UnitPrice) * (1 - item.Discount / 100)) + (double)order.Freight;
+                            @totalAmount.ToString("C", _USD)
+                        }
+                        else
+                        {
+                            @order.Freight?.ToString("C", _USD)
+                        }
+                    </td>
+                    <td>
+                        <a href="@($"orders/edit?orderid={order.OrderId}")">Edit</a> |
+                        <a href="@($"orders/details?orderid={order.OrderId}")">Details</a> |
+                        <a href="@($"orders/delete?orderid={order.OrderId}")">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
-    private IOrderService _orderService;
-    private List<OrderDTO>? Orders;
+    private IList<OrderDTO>? orderDTOs = new List<OrderDTO>();
+
+    private readonly CultureInfo _USD = new("en-US");
 
     protected override async Task OnInitializedAsync()
-    
     {
-        Orders = (await OrderService.GetAllOrdersAsync()).ToList();
+        orderDTOs = await Service.GetAllOrdersAsync();
     }
 }

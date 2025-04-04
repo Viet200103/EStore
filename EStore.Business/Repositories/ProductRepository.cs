@@ -2,7 +2,6 @@ using EStore.Data.Database;
 using EStore.Data.Models;
 using EStore.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace EStore.Business.Repositories
 {
@@ -13,8 +12,15 @@ namespace EStore.Business.Repositories
         {
             _dbContext = dbContext;
         }
-        
-        public async Task<bool> AddProduct(Product product)
+
+        public async Task<IList<Product>> GetAvailableProductsAsync()
+        {
+            return await _dbContext.Products
+        .Where(p => p.UnitslnStock > 0)
+        .ToListAsync();
+        }
+
+         public async Task<bool> AddProduct(Product product)
         {
             await _dbContext.Products.AddAsync(product);
             var result = await _dbContext.SaveChangesAsync();

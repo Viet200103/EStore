@@ -10,4 +10,6 @@ public interface IMemberRepository
     Task<bool> UpdateMember(Member member);
     Task<Member?> GetMemberByEmail(string email);
     Task<(IEnumerable<Member> members, int totalPage)> GetMembers(int pageNumber, int pageSize);
+    Task<List<Member>> GetAllAsync();
+    Task<Member> GetByEmailAsync(string memberEmail);
 }

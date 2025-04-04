@@ -16,14 +16,14 @@ namespace EStore.Business.Repositories
 
         public async Task<bool> CreateMember(Member member)
         {
-            
+
             string normalizedEmail = member.Email.Trim().ToLower();
             bool isExisted = await _dbContext.Members.AnyAsync(x => x.Email == normalizedEmail);
             if (isExisted)
             {
                 throw new Exception($"Email {member.Email} already exists");
             }
-            
+
             _dbContext.Add(member);
             var result = await _dbContext.SaveChangesAsync();
             return result > 0;
@@ -53,11 +53,11 @@ namespace EStore.Business.Repositories
             memberToUpdate.CompanyName = member.CompanyName ?? memberToUpdate.CompanyName;
             memberToUpdate.City = member.City ?? memberToUpdate.City;
             memberToUpdate.Country = member.Country ?? memberToUpdate.Country;
-            
+
             var result = await _dbContext.SaveChangesAsync();
             return result > 0;
         }
-        
+
         public async Task<Member?> GetMemberByEmail(string email)
         {
             return await _dbContext.Members
@@ -76,21 +76,31 @@ namespace EStore.Business.Repositories
             {
                 pageNumber = 1;
             }
-            
+
             IQueryable<Member> query = _dbContext.Members
                 .TagWith("GetMembers")
                 .AsNoTracking();
-            
+
             int count = await query.CountAsync();
-            var totalPage = count == 0 ? 1 : (int) Math.Ceiling((double) count / pageSize);
-            
+            var totalPage = count == 0 ? 1 : (int)Math.Ceiling((double)count / pageSize);
+
             IEnumerable<Member> members = await query
                 .OrderByDescending(member => member.MemberId)
-                .Skip((pageNumber - 1)  * pageSize)
+                .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
-            
+
             return (members, totalPage);
+        }
+
+        public async Task<List<Member>> GetAllAsync()
+        {
+            return await _dbContext.Members.ToListAsync();
+        }
+
+        public async Task<Member> GetByEmailAsync(string memberEmail)
+        {
+            return await _dbContext.Members.FirstOrDefaultAsync(m => m.Email.ToLower() == memberEmail.ToLower());
         }
     }
 }

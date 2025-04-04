@@ -16,9 +16,15 @@ namespace EStore.Business.Repositories
 
         public async Task CreateOrderAsync(Order order)
         {
-            await _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
-        }
+            try
+            {
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex) { 
+                throw new Exception(ex.InnerException.Message);
+            }
+            }
 
         public async Task DeleteOrderAsync(Order order)
         {

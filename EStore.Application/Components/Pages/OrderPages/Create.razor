@@ -1,63 +1,123 @@
-﻿@* @page "/orders/create" *@
-@* @using Microsoft.EntityFrameworkCore *@
-@* @using EStore.Data.Models *@
-@* @inject IDbContextFactory<EStore.Data.Database.EStoreContext> DbFactory *@
-@* @inject NavigationManager NavigationManager *@
+﻿@page "/orders/create"
+@using Microsoft.EntityFrameworkCore
+@using EStore.Business.DTOs
+@using EStore.Business.Services.IServices
+@inject IOrderService OrderService
+@inject IMemberService MemberService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
-@* <PageTitle>Create</PageTitle> *@
+<PageTitle>Create</PageTitle>
 
-@* <h1>Create</h1> *@
+<h1>Create</h1>
 
-@* <h2>Order</h2> *@
-@* <hr /> *@
-@* <div class="row"> *@
-@*     <div class="col-md-4"> *@
-@*         <EditForm method="post" Model="Order" OnValidSubmit="AddOrder" FormName="create" Enhance> *@
-@*             <DataAnnotationsValidator /> *@
-@*             <ValidationSummary class="text-danger" role="alert"/> *@
-@*             <div class="mb-3"> *@
-@*                 <label for="memberid" class="form-label">MemberId:</label>  *@
-@*                 <InputNumber id="memberid" @bind-Value="Order.MemberId" class="form-control" />  *@
-@*                 <ValidationMessage For="() => Order.MemberId" class="text-danger" />  *@
-@*             </div>         *@
-@*             <div class="mb-3"> *@
-@*                 <label for="orderdate" class="form-label">OrderDate:</label>  *@
-@*                 <InputDate id="orderdate" @bind-Value="Order.OrderDate" class="form-control" />  *@
-@*                 <ValidationMessage For="() => Order.OrderDate" class="text-danger" />  *@
-@*             </div>         *@
-@*             <div class="mb-3"> *@
-@*                 <label for="requiredate" class="form-label">RequireDate:</label>  *@
-@*                 <InputDate id="requiredate" @bind-Value="Order.RequireDate" class="form-control" />  *@
-@*                 <ValidationMessage For="() => Order.RequireDate" class="text-danger" />  *@
-@*             </div>         *@
-@*             <div class="mb-3"> *@
-@*                 <label for="shippeddate" class="form-label">ShippedDate:</label>  *@
-@*                 <InputDate id="shippeddate" @bind-Value="Order.ShippedDate" class="form-control" />  *@
-@*                 <ValidationMessage For="() => Order.ShippedDate" class="text-danger" />  *@
-@*             </div>         *@
-@*             <div class="mb-3"> *@
-@*                 <label for="freight" class="form-label">Freight:</label>  *@
-@*                 <InputNumber id="freight" @bind-Value="Order.Freight" class="form-control" />  *@
-@*                 <ValidationMessage For="() => Order.Freight" class="text-danger" />  *@
-@*             </div>         *@
-@*             <button type="submit" class="btn btn-primary">Create</button> *@
-@*         </EditForm> *@
-@*     </div> *@
-@* </div> *@
+<h2>Order</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <EditForm Model="OrderDTO" OnValidSubmit="CreateOrder" FormName="CreateOrderForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
 
-@* <div> *@
-@*     <a href="/orders">Back to List</a> *@
-@* </div> *@
+            <div class="mb-3">
+                <label for="memberemail" class="form-label">Member Email:</label>
+                <select id="memberemail" @bind="OrderDTO.MemberEmail" class="form-control">
+                    <option value="" selected disabled>Select a member</option>
+                    @foreach (var member in members)
+                    {
+                        <option value="@member.Email">@member.Email</option>
+                    }
+                </select>
+                <ValidationMessage For="() => OrderDTO.MemberEmail" class="text-danger" />
+            </div>
 
-@* @code { *@
-@*     [SupplyParameterFromForm] *@
-@*     private Order Order { get; set; } = new(); *@
+            <div class="mb-3">
+                <label class="form-label">Select Products:</label>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Unit Price</th>
+                                <th>Stock</th>
+                                <th>Quantity</th>
+                                <th>Discount</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detail in OrderDTO.OrderDetails)
+                            {
+                                <tr>
+                                    <td>
+                                        <select @bind="detail.ProductId" class="form-control">
+                                            @foreach (var product in AvailableProducts)
+                                            {
+                                                <option value="@product.ProductId">@product.ProductName</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td>@AvailableProducts.FirstOrDefault(p => p.ProductId == detail.ProductId)?.UnitPrice</td>
+                                    <td>@AvailableProducts.FirstOrDefault(p => p.ProductId == detail.ProductId)?.UnitslnStock</td>
+                                    <td><input type="number" class="form-control" @bind="detail.Quantity" min="1" /></td>
+                                    <td><input type="number" class="form-control" @bind="detail.Discount" min="0" /></td>
+                                    <td><button type="button" class="btn btn-danger" @onclick="() => RemoveProduct(detail)">Remove</button></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-success" @onclick="AddProduct">Add Product</button>
+                </div>
+            </div>
 
-@*     private async Task AddOrder() *@
-@*     { *@
-@*         using var context = DbFactory.CreateDbContext(); *@
-@*         context.Orders.Add(Order); *@
-@*         await context.SaveChangesAsync(); *@
-@*         NavigationManager.NavigateTo("/orders"); *@
-@*     } *@
-@* } *@
+            <button type="submit" class="btn btn-primary">Create Order</button>
+        </EditForm>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
+
+<div>
+    <a href="/orders">Back to List</a>
+</div>
+
+@code {
+    private OrderDTO OrderDTO = new() { OrderDetails = new List<OrderDetailDTO>() };
+    private List<MemberDTO> members = new();
+    private List<CreateProductOrderDTO> AvailableProducts = new();
+    private string ErrorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        members = await MemberService.GetAllMembersAsync();
+        AvailableProducts = await OrderService.GetAvailableProductsAsync();
+    }
+
+    private async Task CreateOrder()
+    {
+        if (!OrderDTO.OrderDetails.Any()) ErrorMessage = "Plese select product!";
+
+        try
+        {
+            await OrderService.CreateOrderAsync(OrderDTO);
+            NavigationManager.NavigateTo("/orders");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+
+    private void AddProduct()
+    {
+        OrderDTO.OrderDetails.Add(new OrderDetailDTO());
+    }
+
+    private void RemoveProduct(OrderDetailDTO detail)
+    {
+        OrderDTO.OrderDetails.Remove(detail);
+    }
+}
