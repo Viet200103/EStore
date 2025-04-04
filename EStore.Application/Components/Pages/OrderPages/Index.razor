@@ -46,12 +46,14 @@ else
                     <td>
                         @if (order.OrderDetails != null && order.OrderDetails.Any())
                         {
-                            var totalAmount = order.OrderDetails.Sum(item => (double)(item.Quantity * item.UnitPrice) * (1 - item.Discount / 100)) + (double)order.Freight;
+                            var totalAmount = order.OrderDetails.Sum(item =>
+                            (double)(item.Quantity * item.UnitPrice) * (1 - item.Discount)
+                            ) + (double)(order.Freight ?? 0);
                             @totalAmount.ToString("C", _USD)
                         }
                         else
                         {
-                            @order.Freight?.ToString("C", _USD)
+                            @(order.Freight?.ToString("C", _USD) ?? "$0.00")
                         }
                     </td>
                     <td>

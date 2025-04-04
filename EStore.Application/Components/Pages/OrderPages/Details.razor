@@ -104,8 +104,8 @@
             if (orderDTO.OrderDetails != null)
             {
                 TotalAmount = orderDTO.OrderDetails.Sum(item =>
-                    (double)(item.Quantity * item.UnitPrice) * (1 - item.Discount / 100)) 
-                    + (double)(orderDTO.Freight ?? 0);
+                (double)(item.Quantity * item.UnitPrice) * (1 - item.Discount))
+                + (double)(orderDTO.Freight ?? 0);
             }
         }
     }

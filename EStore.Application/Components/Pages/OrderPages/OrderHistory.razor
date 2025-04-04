@@ -1,0 +1,93 @@
+﻿@page "/order-history"
+@using EStore.Business.DTOs
+@using EStore.Business.Security
+@using EStore.Business.Services.IServices
+@using System.Globalization
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IOrderService OrderService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<PageTitle>Order History</PageTitle>
+
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold mb-6 text-gray-800">🧾 Order History</h2>
+
+    @if (orders == null)
+    {
+        <p class="text-gray-600 italic text-center py-8">Loading data...</p>
+    }
+    else if (!orders.Any())
+    {
+        <p class="text-gray-600 italic text-center py-8">No orders found.</p>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
+                <thead class="bg-gray-100">
+                    <tr class="text-left text-gray-700">
+                        <th class="border px-4 py-2">Order ID</th>
+                        <th class="border px-4 py-2">Order Date</th>
+                        <th class="border px-4 py-2">Require Date</th>
+                        <th class="border px-4 py-2">Shipped Date</th>
+                        <th class="border px-4 py-2">Freight</th>
+                        <th class="border px-4 py-2">Total Amount</th>
+                        <th class="border px-4 py-2 text-center">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in orders)
+                    {
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="border px-4 py-2">@order.OrderId</td>
+                            <td class="border px-4 py-2">@order.OrderDate?.ToString("dd/MM/yyyy")</td>
+                            <td class="border px-4 py-2">@order.RequireDate?.ToString("dd/MM/yyyy")</td>
+                            <td class="border px-4 py-2">@order.ShippedDate?.ToString("dd/MM/yyyy")</td>
+                            <td class="border px-4 py-2 text-green-600 font-medium">@((order.Freight?.ToString("C", _USD) ?? "Free"))</td>
+                            <td class="border px-4 py-2 text-blue-600 font-semibold">
+                                @if (order.OrderDetails != null && order.OrderDetails.Any())
+                                {
+                                    var totalAmount = order.OrderDetails.Sum(item => (double)(item.Quantity * item.UnitPrice) * (1 - item.Discount)) + (double)order.Freight;
+                                    @totalAmount.ToString("C", _USD)
+                                }
+                                else
+                                {
+                                    @order.Freight?.ToString("C", _USD)
+                                }
+                            </td>
+                            <td class="border px-4 py-2 text-center">
+                                <a href="@($"orders/details?orderid={order.OrderId}")">Details</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    private List<OrderDTO>? orders;
+    private readonly CultureInfo _USD = new("en-US");
+    private List<CreateProductOrderDTO> AvailableProducts = new();
+    private int _userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is null || !user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login", true);
+            return;
+        }
+
+        var userHelp = new UserHelper(user);
+        _userId = userHelp.GetUserId();
+
+        orders = await OrderService.GetOrdersByCurrentMemberAsync(_userId);
+        AvailableProducts = await OrderService.GetAvailableProductsAsync();
+    }
+}
