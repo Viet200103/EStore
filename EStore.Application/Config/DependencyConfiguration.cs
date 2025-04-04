@@ -19,16 +19,19 @@ namespace EStore.Application.Config
 
             services.AddScoped<IAuthService, AuthService>();
 
-            services.AddScoped<ITokenProvider, TokenProvider>();
             services.AddHttpContextAccessor();
+            services.AddScoped<ITokenProvider, TokenProvider>();
             services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
             
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
+
+            services.AddScoped<IOrderDetailService, OrderDetailService>();
         }
 
         public static void ConfigForRepositories(IServiceCollection services)
         {
+            services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             services.AddScoped<IMemberRepository, MemberRepository>();

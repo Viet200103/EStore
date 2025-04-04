@@ -22,6 +22,7 @@ builder.Services
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
 
