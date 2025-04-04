@@ -37,8 +37,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var order in orders)
-                    {
+            @foreach (var order in orders)
+            {
                         <tr class="border-b hover:bg-gray-50">
                             <td class="border px-4 py-2">@order.OrderId</td>
                             <td class="border px-4 py-2">@order.OrderDate?.ToString("dd/MM/yyyy")</td>
@@ -60,7 +60,7 @@
                                 <a href="@($"orders/details?orderid={order.OrderId}")">Details</a>
                             </td>
                         </tr>
-                    }
+            }
                 </tbody>
             </table>
         </div>
