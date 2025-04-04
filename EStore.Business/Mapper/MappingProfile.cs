@@ -12,6 +12,10 @@ namespace EStore.Business.Mapper
                 .ForMember(dest => dest.MemberEmail, opt => opt.MapFrom(src => src.Member.Email))
                 .ReverseMap();
             CreateMap<CreateMemberDTO, Member>().ForMember(dest => dest.MemberId, opt => opt.Ignore());
+            
+            CreateMap<Product, ProductDTO>().ReverseMap();
+            CreateMap<Product, CreateProductDTO>().ReverseMap();
+            CreateMap<Category, AddCategoryDTO>().ReverseMap();
         }
     }
 }

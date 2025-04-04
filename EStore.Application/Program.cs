@@ -18,6 +18,7 @@ builder.Services
     .AddRazorComponents()
     .AddInteractiveServerComponents();
 
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();

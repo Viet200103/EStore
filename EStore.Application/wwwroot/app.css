@@ -61,6 +61,13 @@ html, body {
     background: white;
 }
 
+.table-scrollable {
+    width: 100%;
+    min-height: 50vh;
+    max-height: 50vh;
+    overflow: auto;
+}
+
 .table-container table {
     width: 100%;
     table-layout: auto;

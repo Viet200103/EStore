@@ -4,6 +4,10 @@ namespace EStore.Data.Repositories;
 
 public interface IProductRepository
 {
-    public Task<IList<Product>> GetProductsAsync();
-    public Task<Product> GetProductByIdAsync(int id);
+    Task<(IEnumerable<Product> products, int totalPages)> GetProducts(int pageNumber, int pageSize, string? search = null, string? condition = null);
+    
+    Task<Product?> GetProductById(int id);
+    Task<bool> AddProduct(Product product);
+    Task<bool> DeleteProductAsync(int id);
+    Task<bool> UpdateProductAsync(Product product);
 }

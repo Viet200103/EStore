@@ -1,0 +1,78 @@
+﻿@page "/products/delete"
+@using EStore.Business.DTOs
+@using EStore.Business.Service.IService
+@using EStore.Business.Services.IServices
+@using Microsoft.EntityFrameworkCore
+@using EStore.Data.Models
+@inject IProductService ProductService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Product</PageTitle>
+
+<div class="container d-flex flex-column gap-4">
+    <h3 class="my-4">Product Information</h3>
+    @if (product is null)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <div class="alert alert-warning" role="alert">
+            <strong>Are you sure you want to delete this product?</strong>
+            <div class="mt-3">
+                <p>
+                    <strong>Product Name:</strong> @product.ProductName
+                </p>
+                <p>
+                    <strong>Category:</strong> @product.Category?.CategoryName
+                </p>
+                <p>
+                    <strong>Weight:</strong> @product.Weight
+                </p>
+                <p>
+                    <strong>Price:</strong> @product.UnitPrice?.ToString()
+                </p>
+                <p>
+                    <strong>Units in Stock:</strong> @product.UnitslnStock
+                </p>
+            </div>
+        </div>
+       
+        <div>
+            <button class="btn btn-danger col-2" @onclick="DeleteProduct">Delete</button>> |
+            <a href="/products">Back to List</a>
+        </div>
+           
+    }
+</div>
+
+@code {
+    private ProductDTO? product;
+
+    [SupplyParameterFromQuery] 
+    private int ProductId { get; set; }
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        product = await ProductService.GetProductById(ProductId);
+
+        if (product is null)
+        {
+            Navigation.NavigateTo("/not-found");
+        }
+    }
+
+    private async Task DeleteProduct()
+    {
+        if (product != null)
+        {
+            await ProductService.DeleteProduct(ProductId);
+            Navigation.NavigateTo("/products"); // Redirect to the product list page after deletion
+        }
+    }
+
+}
