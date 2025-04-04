@@ -46,7 +46,8 @@ namespace EStore.Business.Repositories
             IQueryable<Product> query = _dbContext
                 .Products
                 .TagWith("Get Products")
-                .AsNoTracking();
+                .AsNoTracking()
+                .Include(p => p.Category);
             
             if (!string.IsNullOrEmpty(search))
             {

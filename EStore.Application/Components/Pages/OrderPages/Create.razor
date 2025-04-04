@@ -9,33 +9,36 @@
 
 <PageTitle>Create</PageTitle>
 
-<h1>Create</h1>
+<div class="container py-4">
+    <h3 class="my-4">Create Order</h3>
+    <div class="row">
+        <div class="col-md-6">
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <div class="alert alert-danger">@ErrorMessage</div>
+            }
 
-<h2>Order</h2>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <EditForm Model="OrderDTO" OnValidSubmit="CreateOrder" FormName="CreateOrderForm">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
+            <EditForm Model="OrderDTO" OnValidSubmit="CreateOrder" FormName="CreateOrderForm">
+                <DataAnnotationsValidator/>
+                <ValidationSummary class="text-danger" role="alert"/>
 
-            <div class="mb-3">
-                <label for="memberemail" class="form-label">Member Email:</label>
-                <select id="memberemail" @bind="OrderDTO.MemberEmail" class="form-control">
-                    <option value="" selected disabled>Select a member</option>
-                    @foreach (var member in members)
-                    {
-                        <option value="@member.Email">@member.Email</option>
-                    }
-                </select>
-                <ValidationMessage For="() => OrderDTO.MemberEmail" class="text-danger" />
-            </div>
+                <div class="mb-3">
+                    <label for="memberemail" class="form-label">Member Email:</label>
+                    <select id="memberemail" @bind="OrderDTO.MemberEmail" class="form-control">
+                        <option value="" selected disabled>Select a member</option>
+                        @foreach (var member in members)
+                        {
+                            <option value="@member.Email">@member.Email</option>
+                        }
+                    </select>
+                    <ValidationMessage For="() => OrderDTO.MemberEmail" class="text-danger"/>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Select Products:</label>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
+                <div class="mb-3">
+                    <label class="form-label">Select Products:</label>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
                             <tr>
                                 <th>Product</th>
                                 <th>Unit Price</th>
@@ -44,8 +47,8 @@
                                 <th>Discount</th>
                                 <th></th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             @foreach (var detail in OrderDTO.OrderDetails)
                             {
                                 <tr>
@@ -59,29 +62,34 @@
                                     </td>
                                     <td>@AvailableProducts.FirstOrDefault(p => p.ProductId == detail.ProductId)?.UnitPrice</td>
                                     <td>@AvailableProducts.FirstOrDefault(p => p.ProductId == detail.ProductId)?.UnitslnStock</td>
-                                    <td><input type="number" class="form-control" @bind="detail.Quantity" min="1" /></td>
-                                    <td><input type="number" class="form-control" @bind="detail.Discount" min="0" /></td>
-                                    <td><button type="button" class="btn btn-danger" @onclick="() => RemoveProduct(detail)">Remove</button></td>
+                                    <td>
+                                        <input type="number" class="form-control" @bind="detail.Quantity" min="1"/>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control" @bind="detail.Discount" min="0"/>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger" @onclick="() => RemoveProduct(detail)">Remove</button>
+                                    </td>
                                 </tr>
                             }
-                        </tbody>
-                    </table>
-                    <button type="button" class="btn btn-success" @onclick="AddProduct">Add Product</button>
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-success" @onclick="AddProduct">Add Product</button>
+                    </div>
                 </div>
-            </div>
 
-            <button type="submit" class="btn btn-primary">Create Order</button>
-        </EditForm>
+                <div class="mt-5">
+                    <button type="submit" class="btn btn-primary">Create Order</button> |
+                    <a href="/orders" class="btn btn-secondary">Back to List</a>
+                </div>
+                
+                
+            </EditForm>
+        </div>
     </div>
-</div>
 
-@if (!string.IsNullOrEmpty(ErrorMessage))
-{
-    <div class="alert alert-danger">@ErrorMessage</div>
-}
-
-<div>
-    <a href="/orders">Back to List</a>
+   
 </div>
 
 @code {
@@ -120,4 +128,5 @@
     {
         OrderDTO.OrderDetails.Remove(detail);
     }
+
 }
