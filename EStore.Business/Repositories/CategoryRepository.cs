@@ -45,9 +45,10 @@ namespace EStore.Business.Repositories
             }
         }
 
-        public Task<Category> GetCategoryByIdAsync(int id)
+        public async Task<Category?> GetCategoryByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Categories
+                .FirstOrDefaultAsync(c => c.CategoryId == id);
         }
 
         public Task<bool> UpdateCategoryAsync(Category category)

@@ -74,6 +74,7 @@ namespace EStore.Business.Repositories
         public async Task<Product?> GetProductById(int id)
         {
             var product = await _dbContext.Products
+                .AsNoTracking()
                 .Include(p => p.Category)
                 .FirstOrDefaultAsync(x => x.ProductId == id);
             return product;
@@ -81,9 +82,10 @@ namespace EStore.Business.Repositories
 
         public async Task<bool> UpdateProductAsync(Product product)
         {
-            _dbContext.Products.Update(product);
+            _dbContext.Products.Attach(product);
+            _dbContext.Entry(product).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
-            return true; ;
+            return true;
         }
     }
 }

@@ -9,11 +9,13 @@ namespace EStore.Business.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
         
-        public ProductService(IProductRepository productRepository, IMapper mapper)
+        public ProductService(IProductRepository productRepository, ICategoryRepository categoryRepository, IMapper mapper)
         {
             _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
 
@@ -47,9 +49,23 @@ namespace EStore.Business.Services
             return await _productRepository.DeleteProductAsync(id);
         }
 
-        public Task<bool> UpdateProduct(ProductDTO product)
+        public async Task<bool> UpdateProduct(ProductDTO product)
         {
-            throw new NotImplementedException();
+            var existingProduct = await _productRepository.GetProductById(product.ProductId);
+            if (existingProduct == null)
+            {
+                throw new KeyNotFoundException("Product not found.");
+            }
+
+            var category = await _categoryRepository.GetCategoryByIdAsync(product.CategoryId);
+            if (category == null)
+            {
+                throw new KeyNotFoundException("Category not found.");
+            }    
+            product.Category = category;
+
+            var updatedProduct = _mapper.Map<Product>(product);
+            return await _productRepository.UpdateProductAsync(updatedProduct);
         }
     }
 }

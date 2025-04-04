@@ -96,7 +96,9 @@ else
             {
                 NavigationManager.NavigateTo("products");
             }
+
 			await ProductService.UpdateProduct(Product!);
+            NavigationManager.NavigateTo("products");
         }
         catch (Exception ex)
         {
